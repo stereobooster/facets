@@ -1,0 +1,16 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  typedfastbitset:
+    specifier: ^0.4.2
+    version: 0.4.2
+
+packages:
+
+  /typedfastbitset@0.4.2:
+    resolution: {integrity: sha512-R+n0vz96Fmcz8lRnjKmoFVe6Q3ST1R79WtxubWdsR3RszA9ZmyMbPqhmAZGznACga+W0mFncQqpWHYR+isWgZA==}
+    dev: false
