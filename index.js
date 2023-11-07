@@ -31,8 +31,8 @@ const union = (a, b) => a.new_union(b);
 const intersection = (a, b) => a.new_intersection(b);
 const arr = (a) => a.array();
 
-// const topValues = (index) =>
-//   [...index.entries()].map(([k, v]) => [k, v.size]).sort((a, b) => b[1] - a[1]);
+const topValues = (index) =>
+  [...index.entries()].map(([k, v]) => [k, v.size]).sort((a, b) => b[1] - a[1]);
 
 const eq = (index, value) => index.get(value);
 const or = union;
@@ -41,3 +41,11 @@ const and = intersection;
 const pa = (a) => console.log(arr(a));
 pa(and(eq(i.categories, "Cell Phones"), eq(i.brand, "Apple")));
 pa(or(eq(i.brand, "Samsung"), eq(i.brand, "Apple")));
+
+const like = (index, value) =>
+  index.find(value).reduce((p, n) => {
+    p.union(n[1]);
+    return p;
+  }, new SparseTypedFastBitSet());
+
+pa(like(i.brand, "Sa"));
