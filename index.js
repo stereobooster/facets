@@ -50,7 +50,7 @@ const topValues = (index) =>
   [...index.entries()]
     .map(([k, v]) => [k, v.size()])
     .sort((a, b) => b[1] - a[1]);
-console.log(topValues(i.brand));
+// console.log(topValues(i.brand));
 
 const filterValues = (index, valueLike) =>
   index
@@ -58,4 +58,18 @@ const filterValues = (index, valueLike) =>
     .map(([k, v]) => [k, v.size()])
     .sort((a, b) => b[1] - a[1]);
 
-console.log(filterValues(i.brand, "Sam"));
+// console.log(filterValues(i.brand, "Sam"));
+
+const pick = (fields, o) => fields.map((field) => o[field]);
+
+const select = (items, where, fields) => {
+  if (Array.isArray(fields)) {
+    return arr(where).map((i) => pick(fields, items[i]));
+  } else if (typeof fields === "string") {
+    return arr(where).map((i) => items[i][fields]);
+  } else {
+    return arr(where).map((i) => items[i]);
+  }
+};
+
+console.log(select(data, eq(i.brand, "Samsung"), "name"));
