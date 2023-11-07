@@ -107,10 +107,6 @@ Equivalent to retriving item from trie `O(?)` for dictionary it would be `O(n)` 
 
 ## TODO
 
-- implementation
-  - `OR` operation on one column
-  - `AND`/`OR` operation on two or more columns
-  - prefix search
 - benchmark performance
   - https://benchmarkjs.com/
 - benchmark memory
