@@ -30,15 +30,17 @@ const intersection = (a, b) => {
   b = new Set(b);
   return Array.from(a).filter((x) => b.has(x));
 };
+const arr = (a) => a;
 
 const topValues = (index) =>
   Object.values(index)
     .map(([k, v]) => [k, v.size])
     .sort((a, b) => b[1] - a[1]);
 
+const eq = (index, value) => index[value];
 const or = union;
 const and = intersection;
-const eq = (index, value) => index[value];
 
-console.log(and(eq(i.categories, "Cell Phones"), eq(i.brand, "Apple")));
-console.log(or(eq(i.brand, "Samsung"), eq(i.brand, "Apple")));
+const pa = (a) => console.log(arr(a));
+pa(and(eq(i.categories, "Cell Phones"), eq(i.brand, "Apple")));
+pa(or(eq(i.brand, "Samsung"), eq(i.brand, "Apple")));
