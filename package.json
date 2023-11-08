@@ -11,8 +11,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@orama/orama": "2.0.0-beta.4",
     "flexsearch": "^0.7.31",
     "fuse.js": "^7.0.0",
+    "minisearch": "^6.2.0",
     "mnemonist": "^0.39.5",
     "typedfastbitset": "^0.4.2"
   }

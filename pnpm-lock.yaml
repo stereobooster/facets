@@ -5,12 +5,18 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@orama/orama':
+    specifier: 2.0.0-beta.4
+    version: 2.0.0-beta.4
   flexsearch:
     specifier: ^0.7.31
     version: 0.7.31
   fuse.js:
     specifier: ^7.0.0
     version: 7.0.0
+  minisearch:
+    specifier: ^6.2.0
+    version: 6.2.0
   mnemonist:
     specifier: ^0.39.5
     version: 0.39.5
@@ -20,6 +26,11 @@ dependencies:
 
 packages:
 
+  /@orama/orama@2.0.0-beta.4:
+    resolution: {integrity: sha512-hPg18sBo8YtZ1vebGwKKcvsLr3EVNR7FoqfDnj7BgGdO5eKsEDINjTGaQIJpAQRNqmSZnGW5N+soXa3Br6GkEA==}
+    engines: {node: '>= 16.0.0'}
+    dev: false
+
   /flexsearch@0.7.31:
     resolution: {integrity: sha512-XGozTsMPYkm+6b5QL3Z9wQcJjNYxp0CYn3U1gO7dwD6PAqU1SVWZxI9CCg3z+ml3YfqdPnrBehaBrnH2AGKbNA==}
     dev: false
@@ -27,6 +38,10 @@ packages:
   /fuse.js@7.0.0:
     resolution: {integrity: sha512-14F4hBIxqKvD4Zz/XjDc3y94mNZN6pRv3U13Udo0lNLCWRBUsrMv2xwcF/y/Z5sV6+FQW+/ow68cHpm4sunt8Q==}
     engines: {node: '>=10'}
+    dev: false
+
+  /minisearch@6.2.0:
+    resolution: {integrity: sha512-BECkorDF1TY2rGKt9XHdSeP9TP29yUbrAaCh/C03wpyf1vx3uYcP/+8XlMcpTkgoU0rBVnHMAOaP83Rc9Tm+TQ==}
     dev: false
 
   /mnemonist@0.39.5:

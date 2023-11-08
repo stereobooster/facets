@@ -49,12 +49,12 @@ Again details can very, for example it can be `page` and `per_page`. What is imp
 - [pagefind](https://pagefind.app/docs/running-pagefind/) specifically tailored for webpages, not JS lists
 - [lunr](https://github.com/olivernn/lunr.js) - unmaintained (last comit 3 years ago) and distributed as UMD
 - [stork](https://stork-search.net/) - deprecated
+- [orama](https://github.com/oramasearch/orama) - it supports only string `ids`. I could map it to numbers, but way to much trouble
 
 ## Candidates
 
-- [fusejs](https://www.fusejs.io/examples.html#search-object-array) - it would be nice if there was an option to return `ids` only
-- [minisearch](https://github.com/lucaong/minisearch#basic-usage) - it seems it requires `id` in the object (can do workaround though)
-- [orama](https://github.com/oramasearch/orama) - it seems is uses string `ids`, if there is no way to switch to numeric `ids` it would be a problem
-- [flexsearch](https://github.com/nextapps-de/flexsearch) - maybe I don't get it, but [there is no way to search over multiple fields and return single result](https://github.com/nextapps-de/flexsearch/discussions/293)
+- [x] [fusejs](https://www.fusejs.io/examples.html#search-object-array) - it would be nice if there was an option to return `ids` only
+- [x] [minisearch](https://github.com/lucaong/minisearch#basic-usage) - it seems it requires `id` in the object (can do workaround though)
+- [x] [flexsearch](https://github.com/nextapps-de/flexsearch) - maybe I don't get it, but [there is no way to search over multiple fields and return single result](https://github.com/nextapps-de/flexsearch/discussions/293)
 - [uFuzzy](https://github.com/leeoniya/uFuzzy) - supports only one field, which gives the same problem as in `flexsearch`
 - [others](https://github.com/leeoniya/uFuzzy#benchmark)
