@@ -1,5 +1,37 @@
 # Inverted index experiment
 
+## TODO
+
+- benchmark performance
+  - https://benchmarkjs.com/
+- benchmark memory
+  - https://www.valentinog.com/blog/node-usage/
+- Indexes
+  - MapIndex (number, boolean)
+  - TrieMapIndex (string)
+  - FullTextIndex (string)
+    - 
+- Indexes can return
+  - If sort by relevance for FT - array
+  - BitSet otherwise
+- Index in one pass
+  - Index should accept value and id
+- Combine all bitsets, map results, sort, filter, limit
+- Facets
+  - Memoize one
+  - intersect initial Bitset, with new one to retrieve new counts
+  - heuristics?
+
+## data structure
+
+- set of integers (BitSet, Roaring Bitmaps)
+- sorted set
+- bag of integers 
+  - https://sair.synerise.com/efficient-integer-pairs-hashing/ ?
+- sorted bag
+
+## Intro
+
 Just some experiments with inverted index and related subjects.
 
 In order to do inverted index we need two data structures:
@@ -104,10 +136,3 @@ select * from t where country LIKE 'U%'
 ```
 
 Equivalent to retriving item from trie `O(?)` for dictionary it would be `O(n)` operation
-
-## TODO
-
-- benchmark performance
-  - https://benchmarkjs.com/
-- benchmark memory
-  - https://www.valentinog.com/blog/node-usage/
