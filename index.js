@@ -62,14 +62,16 @@ const filterValues = (index, valueLike) =>
 
 const pick = (fields, o) => fields.map((field) => o[field]);
 
-const select = (items, where, fields) => {
+const select = (fields, from, where) => {
   if (Array.isArray(fields)) {
-    return arr(where).map((i) => pick(fields, items[i]));
+    return arr(where).map((i) => pick(fields, from[i]));
   } else if (typeof fields === "string") {
-    return arr(where).map((i) => items[i][fields]);
+    return arr(where).map((i) => from[i][fields]);
   } else {
-    return arr(where).map((i) => items[i]);
+    return arr(where).map((i) => from[i]);
   }
 };
 
-console.log(select(data, eq(i.brand, "Samsung"), "name"));
+console.log(select("name", data, eq(i.brand, "Samsung")));
+
+// TODO: limit, sort
