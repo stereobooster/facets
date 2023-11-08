@@ -50,6 +50,7 @@ Options which I can think of:
     - Relate [missing set operations](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations)
 - Less naive approach
   - Dictionary - some kind of TrieMap
+    - https://lucaong.github.io/minisearch/classes/SearchableMap_SearchableMap.SearchableMap.html
     - https://yomguithereal.github.io/mnemonist/trie-map
     - https://github.com/joshjung/trie-search
     - https://github.com/Sec-ant/trie-map
