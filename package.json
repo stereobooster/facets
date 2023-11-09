@@ -16,6 +16,7 @@
     "fuse.js": "^7.0.0",
     "minisearch": "^6.2.0",
     "mnemonist": "^0.39.5",
+    "quick-score": "^0.2.0",
     "typedfastbitset": "^0.4.2"
   }
 }

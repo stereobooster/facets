@@ -20,6 +20,9 @@ dependencies:
   mnemonist:
     specifier: ^0.39.5
     version: 0.39.5
+  quick-score:
+    specifier: ^0.2.0
+    version: 0.2.0
   typedfastbitset:
     specifier: ^0.4.2
     version: 0.4.2
@@ -52,6 +55,10 @@ packages:
 
   /obliterator@2.0.4:
     resolution: {integrity: sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==}
+    dev: false
+
+  /quick-score@0.2.0:
+    resolution: {integrity: sha512-y9PW9rl7BhjTykkGYi4wh0FsXWrWFv3IJVxtAI9FMargSOhqzRN3OjO2itpw63PoSu1FY07i8B2aCwpolQucOQ==}
     dev: false
 
   /typedfastbitset@0.4.2:
