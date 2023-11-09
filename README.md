@@ -1,32 +1,43 @@
 # Inverted index experiment
 
+## Idea
+
+- diffrent type of indexes:
+  - Inverted index based on Map
+  - Inverted index based on TrieMap
+  - Full-text index based on different implemntations, like MiniSearch, Fuse, Flexsearch etc.
+    - except ids, it can return order of items (relevance)
+    - except ids, it can return `matches` 
+- ids from index can be returned as BitSet (preferable) or as array
+- indexes can be combined with `union` (`or`), `intersection` (`and`)
+- other features: 
+  - `sort` - simple array sort
+  - `filter` - simple array filter
+  - pagination - simple array slice
+- facets
+  - categorical facets
+    - collect all values, count, sort by frequency
+  - numerical facets
+    - min, max
+- memoize one
+  - should help with pagination and sorting
+- schema to use different types for different indexes: number, string, string[]
+  - id field
+  - date fields
+  - or rather put type in agregation
+
 ## TODO
 
 - benchmark performance
   - https://benchmarkjs.com/
 - benchmark memory
   - https://www.valentinog.com/blog/node-usage/
-- Indexes
-  - MapIndex (number, boolean)
-  - TrieMapIndex (string)
-  - FullTextIndex (string)
-    - 
-- Indexes can return
-  - If sort by relevance for FT - array
-  - BitSet otherwise
-- Index in one pass
-  - Index should accept value and id
-- Combine all bitsets, map results, sort, filter, limit
-- Facets
-  - Memoize one
-  - intersect initial Bitset, with new one to retrieve new counts
-  - heuristics?
 
 ## data structure
 
 - set of integers (BitSet, Roaring Bitmaps)
 - sorted set
-- bag of integers 
+- bag of integers
   - https://sair.synerise.com/efficient-integer-pairs-hashing/ ?
 - sorted bag
 

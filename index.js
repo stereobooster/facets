@@ -74,4 +74,4 @@ const select = (fields, from, where) => {
 
 console.log(select("name", data, eq(i.brand, "Samsung")));
 
-// TODO: limit, sort
+// TODO: limit, sort, filter, pagination
