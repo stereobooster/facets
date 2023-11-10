@@ -1,7 +1,7 @@
 import MiniSearch, { SearchOptions } from "minisearch";
-import { FulltextAllIndex } from "./FulltextIndex";
+import { TextAllIndex } from "./TextIndex";
 
-export class FtMinisearchIndex implements FulltextAllIndex {
+export class TMinisearchIndex implements TextAllIndex {
   static requiresId = true;
   static usesAddAll = true;
   static usesPagination = false;

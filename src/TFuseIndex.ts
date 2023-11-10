@@ -1,7 +1,7 @@
 import Fuse, { IFuseOptions, FuseSearchOptions } from "fuse.js";
-import { FulltextAllIndex } from "./FulltextIndex";
+import { TextAllIndex } from "./TextIndex";
 
-export class FtFuseIndex implements FulltextAllIndex {
+export class TFuseIndex implements TextAllIndex {
   static requiresId = false;
   static usesAddAll = true;
   static usesPagination = false;

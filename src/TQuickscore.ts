@@ -1,8 +1,8 @@
 import { QuickScore } from "quick-score";
 
-import { FulltextAllIndex } from "./FulltextIndex";
+import { TextAllIndex } from "./TextIndex";
 
-export class FtFuseIndex implements FulltextAllIndex {
+export class TQuickscore implements TextAllIndex {
   static requiresId = true;
   static usesAddAll = true;
   static usesPagination = false;
