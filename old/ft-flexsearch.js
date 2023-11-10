@@ -45,39 +45,39 @@ const search = (index, query, options = {}) => {
 
 console.log(search(index, "apple", { boostFactors: { description: 0.7 } }));
 
-const searchNaive = (index, query, options = {}) => {
-  let { limit, ...rest } = options;
-  limit = limit || 20;
-  const results = index.search(query, {
-    ...rest,
-    limit,
-  });
-  if (results.length === 1) return results[0].result;
-  return [
-    ...new Set(results.reduce((acc, val) => acc.concat(val.result), [])),
-  ].slice(0, limit);
-};
+// const searchNaive = (index, query, options = {}) => {
+//   let { limit, ...rest } = options;
+//   limit = limit || 20;
+//   const results = index.search(query, {
+//     ...rest,
+//     limit,
+//   });
+//   if (results.length === 1) return results[0].result;
+//   return [
+//     ...new Set(results.reduce((acc, val) => acc.concat(val.result), [])),
+//   ].slice(0, limit);
+// };
 
-console.log(searchNaive(index, "apple"));
+// console.log(searchNaive(index, "apple"));
 
-const searchNaive2 = (index, query, options = {}) => {
-  let { limit, ...rest } = options;
-  limit = limit || 20;
-  const results = index.search(query, {
-    ...rest,
-    limit,
-  });
-  if (results.length === 1) return results[0].result;
+// const searchNaive2 = (index, query, options = {}) => {
+//   let { limit, ...rest } = options;
+//   limit = limit || 20;
+//   const results = index.search(query, {
+//     ...rest,
+//     limit,
+//   });
+//   if (results.length === 1) return results[0].result;
 
-  const combinedResult = new Set();
-  for (let i = 0; i < limit; i++) {
-    results.forEach(({ result }) => {
-      if (result[i] !== undefined) combinedResult.add(result[i]);
-    });
-    if (combinedResult.size >= limit) break;
-  }
+//   const combinedResult = new Set();
+//   for (let i = 0; i < limit; i++) {
+//     results.forEach(({ result }) => {
+//       if (result[i] !== undefined) combinedResult.add(result[i]);
+//     });
+//     if (combinedResult.size >= limit) break;
+//   }
 
-  return [...combinedResult];
-};
+//   return [...combinedResult];
+// };
 
-console.log(searchNaive2(index, "apple"));
+// console.log(searchNaive2(index, "apple"));
