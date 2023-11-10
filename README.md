@@ -25,6 +25,7 @@
   - id field
   - date fields
   - or rather put type in agregation
+- query as object `(and (eq index field) (eq index field) (or ...))`
 
 ## TODO
 

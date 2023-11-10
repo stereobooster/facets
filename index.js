@@ -25,15 +25,21 @@ const iIndex = (items, keys) => {
   return indexes;
 };
 
+const u = new SparseTypedFastBitSet();
+data.forEach((item, i) => u.add(i));
+
 const i = iIndex(data, ["brand", "type", "categories"]);
 
 const union = (a, b) => a.new_union(b);
 const intersection = (a, b) => a.new_intersection(b);
+const difference = (a, b) => a.new_difference(b);
 const arr = (a) => a.array();
 
-const eq = (index, value) => index.get(value);
+const not = (a) => difference(u, a);
 const or = union;
 const and = intersection;
+const eq = (index, value) => index.get(value);
+const neq = (index, value) => not(eq(index, value));
 
 const pa = (a) => console.log(arr(a));
 // pa(and(eq(i.categories, "Cell Phones"), eq(i.brand, "Apple")));
@@ -73,5 +79,7 @@ const select = (fields, from, where) => {
 };
 
 console.log(select("name", data, eq(i.brand, "Samsung")));
+
+// console.log(select("name", data, neq(i.brand, "Samsung")));
 
 // TODO: limit, sort, filter, pagination
