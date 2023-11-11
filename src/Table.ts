@@ -61,34 +61,43 @@ export class Table {
   }
 
   search(query: string, options?: any) {
-    let result: SparseTypedFastBitSet;
+    let resultSet: SparseTypedFastBitSet | undefined = undefined;
     let sortArr: Array<number> | undefined;
+
     if (this.#textIndex && query) {
       sortArr = this.#textIndex.search(query, options);
-      result = new SparseTypedFastBitSet(sortArr);
+      const filteredRows = new SparseTypedFastBitSet(sortArr);
+      resultSet = resultSet
+        ? // @ts-expect-error
+          (resultSet.intersection(filteredRows) as SparseTypedFastBitSet)
+        : filteredRows;
     }
 
-    // filter by inverted index and boolean query
-    // #evaluate
+    if (options.filter) {
+      const filteredRows = this.#evalBool(options.filter);
+      resultSet = resultSet
+        ? (resultSet.intersection(filteredRows) as SparseTypedFastBitSet)
+        : filteredRows;
+    }
 
     // filter by function
-    // sort
+    // sort by function
     // pagination
     // facets
   }
 
-  #evaluate(f: Filter): SparseTypedFastBitSet {
+  #evalBool(f: Filter): SparseTypedFastBitSet {
     switch (f.op) {
       case "eq":
         return this.#indexes[f.column].get(f.value);
       case "not":
-        return difference(this.#universe, this.#evaluate(f.val)) as any;
+        return difference(this.#universe, this.#evalBool(f.val)) as any;
       case "or":
-        return union(this.#evaluate(f.val[0]), this.#evaluate(f.val[1]));
+        return union(this.#evalBool(f.val[0]), this.#evalBool(f.val[1]));
       case "and":
         return intersection(
-          this.#evaluate(f.val[0]),
-          this.#evaluate(f.val[1])
+          this.#evalBool(f.val[0]),
+          this.#evalBool(f.val[1])
         ) as any;
     }
   }
