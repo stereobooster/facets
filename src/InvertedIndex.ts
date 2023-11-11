@@ -12,7 +12,7 @@ export class InvertedIndex<K = unknown> {
   }
 }
 
-interface MapLike<K, V> {
+interface Maplike<K, V> {
   get(key: K): V | undefined;
   has(key: K): boolean;
   set(key: K, value: V): this;
@@ -20,7 +20,7 @@ interface MapLike<K, V> {
 }
 
 export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
-  index: MapLike<K, SparseTypedFastBitSet>;
+  index: Maplike<K, SparseTypedFastBitSet>;
 
   add(value: K, id: number) {
     if (!this.index.has(value))

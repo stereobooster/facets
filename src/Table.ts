@@ -44,7 +44,8 @@ type TableOptions = {
 };
 
 export class Table {
-  #items: any[];
+  // #items: any[];
+  #store: Map<number, any>;
   #universe: SparseTypedFastBitSet;
   #indexes: Record<string, InvertedIndex>;
   #options: TableOptions;
@@ -56,8 +57,7 @@ export class Table {
   }
 
   update(items: any[]) {
-    this.#items = items;
-    this.#buildIndex();
+    this.#buildIndex(items);
   }
 
   search(query: string, options?: any) {
@@ -79,6 +79,8 @@ export class Table {
         ? (resultSet.intersection(filteredRows) as SparseTypedFastBitSet)
         : filteredRows;
     }
+
+    const result = resultSet!.array().map((id) => this.#store.get(id));
 
     // filter by function
     // sort by function
@@ -102,7 +104,8 @@ export class Table {
     }
   }
 
-  #buildIndex() {
+  #buildIndex(items: any[]) {
+    this.#store = new Map();
     const textIndexClass = this.#options.textSearch?.indexer;
     const facets = this.#options.facets || {};
     if (textIndexClass) {
@@ -118,22 +121,23 @@ export class Table {
     Object.keys(facets).forEach(
       (key) => (this.#indexes[key] = new facets[key].indexer())
     );
-    this.#items.forEach((item, i) => {
-      this.#universe.add(i);
-      if (textIndexClass?.requiresId) item[idKey] = i;
-      if (textIndexClass?.usesAddOne) this.#textIndex.addOne(i, item);
+    items.forEach((item, id) => {
+      if (textIndexClass?.requiresId) item[idKey] = id;
+      this.#store.set(id, item);
+      this.#universe.add(id);
+      if (textIndexClass?.usesAddOne) this.#textIndex.addOne(id, item);
       Object.keys(facets).forEach((key) => {
         const index = this.#indexes[key];
         const value = item[key];
         if (Array.isArray(value)) {
-          value.forEach((v) => index.add(v, i));
+          value.forEach((v) => index.add(v, id));
         } else {
-          index.add(value, i);
+          index.add(value, id);
         }
       });
     });
 
     // after adding ids to items
-    if (textIndexClass?.usesAddAll) this.#textIndex.addAll(this.#items);
+    if (textIndexClass?.usesAddAll) this.#textIndex.addAll(items);
   }
 }

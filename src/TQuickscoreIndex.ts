@@ -2,7 +2,7 @@ import { QuickScore } from "quick-score";
 
 import { TextIndexBase } from "./TextIndex";
 
-export class TQuickscore extends TextIndexBase {
+export class TQuickscoreIndex extends TextIndexBase {
   static usesAddAll = true;
   static requiresId = true;
   static usesPagination = false;
