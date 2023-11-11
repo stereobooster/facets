@@ -2,9 +2,10 @@ import flexsearch, { SearchOptions } from "flexsearch";
 // @ts-ignore
 const { Document } = flexsearch;
 
-import { TextIndexOne } from "./TextIndex";
+import { TextIndexBase } from "./TextIndex";
 
-export class TFlexsearchIndex extends TextIndexOne {
+export class TFlexsearchIndex extends TextIndexBase {
+  static usesAddOne = true;
   static requiresId = false;
   static usesPagination = true;
 

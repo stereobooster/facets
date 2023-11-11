@@ -95,29 +95,3 @@ export function evaluate(
       ) as any;
   }
 }
-
-export function buildIndex<T extends Facets>(
-  items: any[],
-  facets: T,
-  idKey?: string
-): [SparseTypedFastBitSet, IndexStore<T>] {
-  const universe = new SparseTypedFastBitSet();
-  const indexes: IndexStore<T> = {} as any;
-  Object.entries(facets).forEach(
-    ([key, klass]) => (indexes[key as keyof T] = new klass())
-  );
-  items.forEach((item, i) => {
-    if (idKey) item[idKey] = i;
-    universe.add(i);
-    Object.keys(facets).forEach((key) => {
-      const index = indexes[key];
-      const value = item[key];
-      if (Array.isArray(value)) {
-        value.forEach((v) => index.add(v, i));
-      } else {
-        index.add(value, i);
-      }
-    });
-  });
-  return [universe, indexes];
-}

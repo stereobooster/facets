@@ -1,8 +1,9 @@
 import { QuickScore } from "quick-score";
 
-import { TextIndexAll } from "./TextIndex";
+import { TextIndexBase } from "./TextIndex";
 
-export class TQuickscore extends TextIndexAll {
+export class TQuickscore extends TextIndexBase {
+  static usesAddAll = true;
   static requiresId = true;
   static usesPagination = false;
 

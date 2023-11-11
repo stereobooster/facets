@@ -1,7 +1,8 @@
 import MiniSearch, { SearchOptions } from "minisearch";
-import { TextIndexAll } from "./TextIndex";
+import { TextIndexBase } from "./TextIndex";
 
-export class TMinisearchIndex extends TextIndexAll {
+export class TMinisearchIndex extends TextIndexBase {
+  static usesAddAll = true;
   static requiresId = true;
   static usesPagination = false;
 
