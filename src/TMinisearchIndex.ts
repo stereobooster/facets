@@ -1,14 +1,14 @@
 import MiniSearch, { SearchOptions } from "minisearch";
-import { TextAllIndex } from "./TextIndex";
+import { TextIndexAll } from "./TextIndex";
 
-export class TMinisearchIndex implements TextAllIndex {
+export class TMinisearchIndex extends TextIndexAll {
   static requiresId = true;
-  static usesAddAll = true;
   static usesPagination = false;
 
   index: MiniSearch<any>;
 
   constructor(fields: string[]) {
+    super();
     const index = new MiniSearch({
       fields,
       storeFields: [],

@@ -1,16 +1,16 @@
 import { QuickScore } from "quick-score";
 
-import { TextAllIndex } from "./TextIndex";
+import { TextIndexAll } from "./TextIndex";
 
-export class TQuickscore implements TextAllIndex {
+export class TQuickscore extends TextIndexAll {
   static requiresId = true;
-  static usesAddAll = true;
   static usesPagination = false;
 
   fields: Array<string>;
   index: QuickScore<any>;
 
   constructor(fields: string[]) {
+    super();
     this.fields = fields;
   }
 

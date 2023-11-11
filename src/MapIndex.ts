@@ -1,10 +1,11 @@
 import { SparseTypedFastBitSet } from "typedfastbitset";
 import { InvertedIndex } from "./InvertedIndex";
 
-export class MapIndex<K> implements InvertedIndex<K> {
+export class MapIndex<K> extends InvertedIndex<K> {
   index: Map<K, SparseTypedFastBitSet>;
 
   constructor() {
+    super();
     this.index = new Map();
   }
 

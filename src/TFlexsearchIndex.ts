@@ -2,16 +2,16 @@ import flexsearch, { SearchOptions } from "flexsearch";
 // @ts-ignore
 const { Document } = flexsearch;
 
-import { TextOneIndex } from "./TextIndex";
+import { TextIndexOne } from "./TextIndex";
 
-export class TFlexsearchIndex implements TextOneIndex {
+export class TFlexsearchIndex extends TextIndexOne {
   static requiresId = false;
-  static usesAddOne = true;
   static usesPagination = true;
 
   index: typeof Document;
 
   constructor(fields: string[]) {
+    super();
     this.index = new Document({ index: fields, store: false });
   }
 

@@ -2,10 +2,11 @@ import TrieMap from "mnemonist/trie-map.js";
 import { SparseTypedFastBitSet } from "typedfastbitset";
 import { InvertedIndex } from "./InvertedIndex";
 
-export class TrieMapIndex<K> implements InvertedIndex<K> {
+export class TrieMapIndex<K> extends InvertedIndex<K> {
   index: TrieMap<K, SparseTypedFastBitSet>;
 
   constructor() {
+    super()
     this.index = new TrieMap();
   }
 

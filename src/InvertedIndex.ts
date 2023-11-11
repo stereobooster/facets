@@ -1,14 +1,16 @@
 import { SparseTypedFastBitSet } from "typedfastbitset";
-import { MapIndex } from "./MapIndex";
-import { TrieMapIndex } from "./TrieMapIndex";
 
-export interface InvertedIndex<K = unknown> {
-  add(value: K, id: number): void;
-  get(value: K): SparseTypedFastBitSet;
+export class InvertedIndex<K = unknown> {
+  add(value: K, id: number): void {
+    throw new Error("Not implemented");
+  }
+  get(value: K): SparseTypedFastBitSet {
+    throw new Error("Not implemented");
+  }
 }
 
-type Facets = {
-  [k: string]: typeof MapIndex | typeof TrieMapIndex;
+export type Facets = {
+  [k: string]: typeof InvertedIndex;
 };
 
 type IndexStore<T extends Facets> = {

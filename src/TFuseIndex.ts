@@ -1,15 +1,15 @@
 import Fuse, { IFuseOptions, FuseSearchOptions } from "fuse.js";
-import { TextAllIndex } from "./TextIndex";
+import { TextIndexAll } from "./TextIndex";
 
-export class TFuseIndex implements TextAllIndex {
+export class TFuseIndex extends TextIndexAll {
   static requiresId = false;
-  static usesAddAll = true;
   static usesPagination = false;
 
   options: IFuseOptions<string>;
   index: Fuse<any>;
 
   constructor(fields: string[]) {
+    super();
     this.options = {
       includeScore: true,
       keys: fields,
