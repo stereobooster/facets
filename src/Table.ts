@@ -2,11 +2,9 @@ import { TextIndex } from "./TextIndex";
 import { InvertedIndex } from "./InvertedIndex";
 
 type Facet = {
-  [k: string]: {
-    indexer: typeof InvertedIndex;
-    limit?: number;
-    sort?: string[];
-  };
+  indexer: typeof InvertedIndex;
+  limit?: number;
+  sort?: string[];
 };
 
 type TableOptions = {

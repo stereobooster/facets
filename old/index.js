@@ -41,31 +41,6 @@ const and = intersection;
 const eq = (index, value) => index.get(value);
 const neq = (index, value) => not(eq(index, value));
 
-const pa = (a) => console.log(arr(a));
-// pa(and(eq(i.categories, "Cell Phones"), eq(i.brand, "Apple")));
-// pa(or(eq(i.brand, "Samsung"), eq(i.brand, "Apple")));
-
-const like = (index, valueLike) =>
-  index.find(valueLike).reduce((p, [k, v]) => {
-    p.union(v);
-    return p;
-  }, new SparseTypedFastBitSet());
-// pa(like(i.brand, "Sa"));
-
-const topValues = (index) =>
-  [...index.entries()]
-    .map(([k, v]) => [k, v.size()])
-    .sort((a, b) => b[1] - a[1]);
-// console.log(topValues(i.brand));
-
-const filterValues = (index, valueLike) =>
-  index
-    .find(valueLike)
-    .map(([k, v]) => [k, v.size()])
-    .sort((a, b) => b[1] - a[1]);
-
-// console.log(filterValues(i.brand, "Sam"));
-
 const pick = (fields, o) => fields.map((field) => o[field]);
 
 const select = (fields, from, where) => {
@@ -79,7 +54,3 @@ const select = (fields, from, where) => {
 };
 
 console.log(select("name", data, eq(i.brand, "Samsung")));
-
-// console.log(select("name", data, neq(i.brand, "Samsung")));
-
-// TODO: limit, sort, filter, pagination
