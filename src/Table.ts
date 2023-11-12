@@ -43,6 +43,31 @@ type TableOptions = {
   idKey?: string;
 };
 
+export type SearchOptions<I = unknown> = {
+  query?: string;
+  page?: number;
+  per_page?: number;
+  sort?: any;
+  filters?: Record<string, Filter>;
+  filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
+};
+
+export type SearchResults<I = unknown> = {
+  pagination: {
+    perPage: number;
+    page: number;
+    total: number;
+  };
+  timings: {
+    total: number;
+    facets: number;
+    search: number;
+    sorting: number;
+  };
+  items: I[];
+  facets: any;
+};
+
 export class Table {
   // #items: any[];
   #store: Map<number, any>;
@@ -60,7 +85,7 @@ export class Table {
     this.#buildIndex(items);
   }
 
-  search(query: string, options?: any) {
+  search(query: string, options?: any): SearchResults {
     let resultSet: SparseTypedFastBitSet | undefined = undefined;
     let sortArr: Array<number> | undefined;
 
@@ -86,6 +111,10 @@ export class Table {
     // sort by function
     // pagination
     // facets
+
+    return {
+      items: result,
+    } as any;
   }
 
   #evalBool(f: Filter): SparseTypedFastBitSet {
