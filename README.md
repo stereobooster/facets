@@ -25,6 +25,7 @@
     - typescript signature
     - Post MVP
       - built in prefix search based on TrieMap
+        - through facet filter
       - memoization for consequent operations
         - search narrowing
         - pagination
@@ -51,3 +52,147 @@
     - https://github.com/typesense/typesense-instantsearch-adapter/blob/master/src/TypesenseInstantsearchAdapter.js
   - demo
   - query string parser
+
+## Facet filter
+
+### One value
+
+```js
+{
+  strColumn: "x";
+  numColumn: 1;
+}
+```
+
+```sql
+WHERE strColumn = "x" AND numColumn = 1
+```
+
+### N-values
+
+```js
+{
+  strColumn: ["x", "y"],
+  numColumn: [0, 1],
+}
+```
+
+```sql
+WHERE (strColumn = "x" OR strColumn = "y") AND (numColumn = 0 OR numColumn = 1)
+```
+
+### Prefix-value
+
+```js
+{
+  strColumn: {
+    prefix: "x",
+  }
+}
+```
+
+```sql
+WHERE strColumn LIKE "x%"
+```
+
+Easy to do with **TrieMap**.
+
+### Range-value
+
+```js
+{ numColumn: { from: 0, to: 1 } }
+```
+
+```sql
+WHERE numColumn >= 0 AND numColumn <= 1
+```
+
+Also may work for dates
+
+## Sort
+
+### By string column
+
+```js
+sort: {
+  column: "strColumn",
+  order: "asc",
+  type: "string",
+  locale: "en", // optional
+  options: { caseFirst: "upper" } // optional
+}
+```
+
+```js
+items.sort((a, b) =>
+  a["strColumn"].localeCompare(b["strColumn"], "en", { caseFirst: "upper" })
+);
+```
+
+### By numeric column
+
+```js
+sort: {
+  column: "numColumn",
+  order: "asc",
+  type: "number"
+}
+```
+
+```js
+items.sort((a, b) => a["numColumn"] - b["numColumn"]);
+```
+
+### Types
+
+If we would use scheme, there would be no need to specify sorting type:
+
+```js
+sort: {
+  column: "strColumn",
+  order: "asc"
+}
+```
+
+```sql
+ORDER BY strColumn DESC
+```
+
+### NULLS FIRST or LAST
+
+```js
+sort: {
+  column: "strColumn",
+  order: "asc",
+  nulls: "first"
+}
+```
+
+```js
+items.sort((a, b) => {
+  if (a["numColumn"] == null && b["numColumn"] == null) return 0;
+  if (a["numColumn"] == null) return -1;
+  if (b["numColumn"] == null) return -1;
+  return a["numColumn"] - b["numColumn"];
+});
+```
+
+Note: `null == null` and `null == undefined`
+
+### Sort by more than one column
+
+```js
+sort: [
+  { column: "strColumn", order: "asc" },
+  { column: "numColumn", order: "desc" },
+];
+```
+
+OR
+
+```js
+sort: {
+  strColumn: "asc",
+  numColumn: "desc",
+}
+```
