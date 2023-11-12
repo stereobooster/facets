@@ -6,20 +6,32 @@
   - main package
     - MVP
       - [x] one level objects
+      - [ ] use one type of pagination everywhere: `page + perPgae` or `limit + offset`
       - [ ] filter by facets
       - [ ] text search
       - [ ] sort results by string column
+        - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
+        - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
       - [ ] sort results by numeric column
       - [ ] sort results by relevance
       - [ ] pagination
       - [ ] filter by callback (for numeric ranges)
       - [ ] facets
+        - sort facets (by frequency, etc.)
+        - limit
       - [ ] search for facets
-      - [ ] sort facets (by frequency, etc.)
+        - pagination
     - tests
     - typescript signature
     - Post MVP
+      - built in prefix search based on TrieMap
+      - memoization for consequent operations
+        - search narrowing
+        - pagination
+        - sorting
       - filter by facet by numeric range
+        - would allow better memoization
+      - sort by more than one column
       - highilght search results
       - preindexed data
       - event dispatcher for async processing
