@@ -13,8 +13,8 @@ export function sortNulls(
   };
 }
 
-type SortDirection = "asc" | "desc";
-type SortOptions = {
+export type SortDirection = "asc" | "desc";
+type SortBaseOptions = {
   order: SortDirection;
   /**
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
@@ -26,36 +26,36 @@ type SortOptions = {
   options?: Intl.CollatorOptions;
 };
 
-export function sortNumbers(opt: SortOptions) {
-  const o = opt?.order === "desc" ? 1 : -1;
+export function sortNumbers(opt: SortBaseOptions) {
+  const o = opt.order === "desc" ? 1 : -1;
   return (a: any, b: any) => {
     return (b - a) * o;
   };
 }
 
-export function sortBooleans(opt: SortOptions) {
-  const o = opt?.order === "desc" ? 1 : -1;
+export function sortBooleans(opt: SortBaseOptions) {
+  const o = opt.order === "desc" ? 1 : -1;
   return (a: any, b: any) => {
     if (a === b) return 0;
     return (a === true ? -1 : 1) * o;
   };
 }
 
-export function sortStrings(opt: SortOptions) {
-  const o = opt?.order === "desc" ? 1 : -1;
+export function sortStrings(opt: SortBaseOptions) {
+  const o = opt.order === "desc" ? 1 : -1;
   return (a: any, b: any) => {
     return b.localeCompare(a, opt?.locale, opt?.options) * o;
   };
 }
 
-export function sortStringsSoft(opt: SortOptions) {
+export function sortStringsSoft(opt: SortBaseOptions) {
   const o = opt?.order === "desc" ? 1 : -1;
   return (a: any, b: any) => {
     return `${b}`.localeCompare(`${a}`, opt?.locale, opt?.options) * o;
   };
 }
 
-type SortGeneralOptions = SortOptions & {
+export type SortGeneralOptions = SortBaseOptions & {
   type?: "number" | "string" | "boolean";
   /**
    * Be aware nulls first would still place undefined in the end of list
@@ -77,5 +77,18 @@ const sorters = {
 };
 
 export function sortGeneral(opt: SortGeneralOptions) {
-  return sortNulls(opt?.nulls, sorters[opt.type || "default"](opt));
+  return sortNulls(opt.nulls, sorters[opt.type || "default"](opt));
+}
+
+export function sortByField(field: string, cb: (a: any, b: any) => number) {
+  return (a: any, b: any) => cb(a[field], b[field]);
+}
+
+type SortOptions = SortGeneralOptions & {
+  field: string;
+};
+
+// TODO: sort by many fields
+export function sort(opt: SortOptions) {
+  return sortByField(opt.field, sortGeneral(opt));
 }

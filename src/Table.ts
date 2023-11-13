@@ -1,15 +1,8 @@
 import { TextIndex } from "./TextIndex";
 import { InvertedIndex } from "./InvertedIndex";
 import { SparseTypedFastBitSet } from "typedfastbitset";
-import {
-  BoolFilter,
-  FacetFilter,
-  difference,
-  evalBool,
-  facetFilterToBool,
-  intersection,
-  union,
-} from "./boolean";
+import { FacetFilter, evalBool, facetFilterToBool } from "./boolean";
+import { SortDirection, SortGeneralOptions, sort } from "./sort";
 
 type Facet = {
   indexer: typeof InvertedIndex;
@@ -26,6 +19,8 @@ type TableOptions = {
   // idKey?: string;
 };
 
+type SearchSortOptions = Record<string, SortDirection | SortGeneralOptions>;
+
 export type SearchOptions<I = unknown> = {
   query?: string;
   page?: number;
@@ -34,7 +29,7 @@ export type SearchOptions<I = unknown> = {
   // column name, direction
   // type: string | number
   // for string: locale, options (Collator)
-  sort?: any;
+  sort?: SearchSortOptions;
   facetFilter?: FacetFilter;
   filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
 };
@@ -105,9 +100,19 @@ export class Table {
         // because sort works in place
         result = [...this.#items];
       }
-      // TODO: sort by column, direction
-      result = result.sort(options?.sort);
-      // TODO: sort by relevance, number, string with colator
+      if (Object.keys(options?.sort).length > 1)
+        throw new Error("Can't handle more than one key yet");
+      const field = Object.keys(options?.sort)[0];
+      const order = options.sort[field];
+      if (typeof order === "string") {
+        result = result.sort(sort({ field, order }));
+      } else {
+        result = result.sort(sort({ field, ...order }));
+      }
+    } else if (sortArr) {
+      // sort by relevance
+      // this ain't gonna work
+      // result = [...new Map(sortArr.map((x, y) => [y, result![x]])).values()];
     }
 
     if (!result) result = this.#items;
