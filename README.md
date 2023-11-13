@@ -17,13 +17,13 @@
       - [ ] pagination
       - [ ] filter by callback (for numeric ranges)
       - [ ] facets
-        - sort facets (by frequency, etc.)
+        - sort facets by frequency, etc.
         - limit
-      - [ ] search for facets
-        - pagination
     - tests
     - typescript signature
     - Post MVP
+      - [ ] search for facets
+        - pagination
       - built in prefix search based on TrieMap
         - through facet filter
       - memoization for consequent operations
@@ -45,13 +45,17 @@
         - TrieMap only works for strings
         - by default JS sorts numbers as strings
         - natural sort (`["a100", "a11"].sort()`)
-        - RoaringWasm and other TrieMaps
         - [BFloat16 wasm](https://github.com/tc39/proposal-float16array/issues/7)
+      - RoaringWasm and other TrieMaps
+      - hierarchical filter with TrieMap and custom separator (`/` instead of `>`)
+        - But it needs a way to get root level keys
+      - event dispatcher to allow async loading, async indexing
   - InstantSearch adpater
     - https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/src/adapter.ts
     - https://github.com/typesense/typesense-instantsearch-adapter/blob/master/src/TypesenseInstantsearchAdapter.js
-  - demo
+  - demo with table / cards
   - query string parser
+  - demo with graph?
 
 ## Facet filter
 
@@ -143,6 +147,23 @@ sort: {
 items.sort((a, b) => a["numColumn"] - b["numColumn"]);
 ```
 
+### By boolean column
+
+```js
+sort: {
+  column: "boolColumn",
+  order: "asc",
+  type: "boolean"
+}
+```
+
+```js
+items.sort((a, b) => {
+  if (a === b) return 0;
+  return a ? 1 : -1;
+});
+```
+
 ### Types
 
 If we would use scheme, there would be no need to specify sorting type:
@@ -196,3 +217,15 @@ sort: {
   numColumn: "desc",
 }
 ```
+
+## Supported types
+
+- string, number, boolean, null - are basic JSON types and they all can be supported
+- arrays supported for filtering and faceting, but not for sorting
+- supporting objects means supporting more tnan one level objects
+
+**Other**:
+
+- strings as dates
+  - TrieMap for ISO-8601 fromat?
+- numbers as dates

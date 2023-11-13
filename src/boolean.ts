@@ -28,7 +28,7 @@ export const difference = (...args: SparseTypedFastBitSet[]) => {
   return result as SparseTypedFastBitSet;
 };
 
-type SupportedColumnTypes = string | number;
+type SupportedColumnTypes = string | number | boolean;
 
 export type FacetFilter = Record<
   string,
