@@ -6,7 +6,7 @@ import { Table } from "../src/Table";
 const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40);
 
 describe("Table", () => {
-  describe("without query", () => {
+  describe("without text and facets", () => {
     const t = new Table({}, items);
 
     it("returns results", () => {
@@ -92,4 +92,43 @@ describe("Table", () => {
     });
   });
 
+  describe("with facets", () => {
+    const t = new Table(
+      {
+        facets: {
+          brand: {},
+          categories: {},
+          type: {},
+          price: {},
+          popularity: {},
+          rating: {},
+        },
+      },
+      items
+    );
+
+    it("filters by number facet", () => {
+      const result = t.search({ facetFilter: { price: 14.95 } });
+      expect(result.items[0].price).toEqual(14.95);
+    });
+
+    it("filters by string facet", () => {
+      const categories = [
+        "Cameras & Camcorders",
+        "Digital Cameras",
+        "Point & Shoot Cameras",
+        "360 & Panoramic Cameras",
+      ];
+      let result = t.search({
+        facetFilter: { categories: "Cameras & Camcorders" },
+      });
+      expect(result.items[0].categories).toEqual(categories);
+
+      result = t.search({
+        facetFilter: { categories: "360 & Panoramic Cameras" },
+      });
+      expect(result.items[0].categories).toEqual(categories);
+    });
+    
+  });
 });

@@ -5,14 +5,9 @@
 - workspace
   - main package
     - MVP
-      - [x] one level objects
-      - [x] sort results by string column
-      - [x] sort results by numeric column
-      - [x] use one type of pagination everywhere: `page + perPgae`
+      - [ ] filter by facets with null
       - [ ] sort results by relevance
-      - [ ] filter by facets
       - [ ] text search
-      - [ ] pagination
       - [ ] filter by callback (for numeric ranges)
       - [ ] facets
         - sort facets by frequency, etc.

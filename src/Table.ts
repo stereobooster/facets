@@ -3,9 +3,10 @@ import { InvertedIndex } from "./InvertedIndex";
 import { SparseTypedFastBitSet } from "typedfastbitset";
 import { FacetFilter, evalBool, facetFilterToBool } from "./boolean";
 import { SortOptions, sort } from "./sort";
+import { IMapIndex } from "./IMapIndex";
 
 type Facet = {
-  indexer: typeof InvertedIndex;
+  indexer?: typeof InvertedIndex;
   page?: number;
   perPage?: string[];
 };
@@ -74,7 +75,7 @@ export class Table {
         : filteredRows;
     }
 
-    if (options?.facetFilter && Object.keys(options?.facetFilter).length > 1) {
+    if (options?.facetFilter && Object.keys(options?.facetFilter).length > 0) {
       // Do I even need this culprit with boolean filters?
       const filteredRows = evalBool(
         this.#indexes,
@@ -150,7 +151,7 @@ export class Table {
     const facets = this.#options.facets || {};
     this.#indexes = {};
     Object.keys(facets).forEach(
-      (key) => (this.#indexes[key] = new facets[key].indexer())
+      (key) => (this.#indexes[key] = new (facets[key].indexer || IMapIndex)())
     );
 
     this.#universe = new SparseTypedFastBitSet();

@@ -2,8 +2,8 @@ import { SparseTypedFastBitSet } from "typedfastbitset";
 import { InvertedIndex } from "./InvertedIndex";
 
 export const union = (...args: SparseTypedFastBitSet[]) => {
-  if (args.length === 0) new SparseTypedFastBitSet();
-  if (args.length === 1) args[0];
+  if (args.length === 0) return new SparseTypedFastBitSet();
+  if (args.length === 1) return args[0];
   const [a, b, ...rest] = args;
   const result = a.new_union(b);
   rest.forEach((x) => result.union(x));
@@ -11,8 +11,8 @@ export const union = (...args: SparseTypedFastBitSet[]) => {
 };
 
 export const intersection = (...args: SparseTypedFastBitSet[]) => {
-  if (args.length === 0) new SparseTypedFastBitSet();
-  if (args.length === 1) args[0];
+  if (args.length === 0) return new SparseTypedFastBitSet();
+  if (args.length === 1) return args[0];
   const [a, b, ...rest] = args;
   const result = a.new_intersection(b);
   rest.forEach((x) => result.intersection(x));
@@ -20,8 +20,8 @@ export const intersection = (...args: SparseTypedFastBitSet[]) => {
 };
 
 export const difference = (...args: SparseTypedFastBitSet[]) => {
-  if (args.length === 0) new SparseTypedFastBitSet();
-  if (args.length === 1) args[0];
+  if (args.length === 0) return new SparseTypedFastBitSet();
+  if (args.length === 1) return args[0];
   const [a, b, ...rest] = args;
   const result = a.new_difference(b);
   rest.forEach((x) => result.difference(x));
