@@ -2,12 +2,12 @@ import { TextIndex } from "./TextIndex";
 import { InvertedIndex } from "./InvertedIndex";
 import { SparseTypedFastBitSet } from "typedfastbitset";
 import { FacetFilter, evalBool, facetFilterToBool } from "./boolean";
-import { SortDirection, SortGeneralOptions, sort } from "./sort";
+import { SortOptions, sort } from "./sort";
 
 type Facet = {
   indexer: typeof InvertedIndex;
-  limit?: number;
-  sort?: string[];
+  page?: number;
+  perPage?: string[];
 };
 
 type TableOptions = {
@@ -19,8 +19,6 @@ type TableOptions = {
   // idKey?: string;
 };
 
-type SearchSortOptions = Record<string, SortDirection | SortGeneralOptions>;
-
 export type SearchOptions<I = unknown> = {
   query?: string;
   page?: number;
@@ -29,7 +27,7 @@ export type SearchOptions<I = unknown> = {
   // column name, direction
   // type: string | number
   // for string: locale, options (Collator)
-  sort?: SearchSortOptions;
+  sort?: SortOptions;
   facetFilter?: FacetFilter;
   filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
 };
@@ -63,12 +61,12 @@ export class Table {
     this.#buildIndex(items);
   }
 
-  search(query: string, options?: SearchOptions): SearchResults {
+  search(options?: SearchOptions): SearchResults<any> {
     let resultSet: SparseTypedFastBitSet | undefined = undefined;
     let sortArr: Array<number> | undefined;
 
-    if (this.#textIndex && query) {
-      sortArr = this.#textIndex.search(query, options);
+    if (this.#textIndex && options?.query) {
+      sortArr = this.#textIndex.search(options?.query, options);
       const filteredRows = new SparseTypedFastBitSet(sortArr);
       resultSet = resultSet
         ? // @ts-expect-error
@@ -88,7 +86,16 @@ export class Table {
         : filteredRows;
     }
 
-    let result = resultSet?.array().map((id) => this.#items[id]);
+    let resultArr: number[] | undefined;
+
+    if (!options?.sort && sortArr) {
+      // sort by relevance - is there a better way?
+      resultArr = sortArr.filter((x) => resultSet?.has(x));
+    } else {
+      resultArr = resultSet?.array();
+    }
+
+    let result = resultArr?.map((id) => this.#items[id]);
 
     if (options?.filterBy) {
       if (!result) result = this.#items;
@@ -100,24 +107,12 @@ export class Table {
         // because sort works in place
         result = [...this.#items];
       }
-      if (Object.keys(options?.sort).length > 1)
-        throw new Error("Can't handle more than one key yet");
-      const field = Object.keys(options?.sort)[0];
-      const order = options.sort[field];
-      if (typeof order === "string") {
-        result = result.sort(sort({ field, order }));
-      } else {
-        result = result.sort(sort({ field, ...order }));
-      }
-    } else if (sortArr) {
-      // sort by relevance
-      // this ain't gonna work
-      // result = [...new Map(sortArr.map((x, y) => [y, result![x]])).values()];
+      result = result.sort(sort(options.sort));
     }
 
     if (!result) result = this.#items;
 
-    // facets:
+    // TODO facets:
     // - if number of items in result is small it is cheaper to build facets from scratch
     // - if number of values in facet is small it is easier to intersect result with facets
     // - if there is a filter by the facet it's much easier to build this facet
@@ -125,7 +120,7 @@ export class Table {
     //   - everything else with 0
 
     const page = options?.page || 0;
-    const perPage = options?.perPage || 0;
+    const perPage = options?.perPage || 20;
     return {
       items: result.slice(page * perPage, (page + 1) * perPage),
       pagination: {
@@ -133,7 +128,6 @@ export class Table {
         page,
         total: result.length,
       },
-      // TODO: facets
       facets: {},
     };
   }

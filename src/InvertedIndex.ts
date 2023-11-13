@@ -35,7 +35,7 @@ export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
   topValues() {
     // TOOD: memoize one
     // TOOD: sort options
-    // TOOD: limit, offset
+    // TOOD: page, perPage
     return [...this.index.entries()]
       .map(([k, v]) => [k, v.size()] as [K, number])
       .sort((a, b) => b[1] - a[1]);

@@ -84,7 +84,7 @@ export function sortByField(field: string, cb: (a: any, b: any) => number) {
   return (a: any, b: any) => cb(a[field], b[field]);
 }
 
-type SortOptions = SortGeneralOptions & {
+export type SortOptions = SortGeneralOptions & {
   field: string;
 };
 

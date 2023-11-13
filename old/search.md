@@ -39,7 +39,7 @@ It doesn't have to be precise. For example, there can be options for stemming, l
 And search would be like this:
 
 ```js
-const ids = index.search("query", { offset: 0, limit: 20 });
+const ids = index.search("query", { page: 0, perPage: 20 });
 ```
 
 Again details can very, for example it can be `page` and `per_page`. What is important it should return list of `ids` sorted by relevance.
