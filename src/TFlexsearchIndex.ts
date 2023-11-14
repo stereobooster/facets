@@ -2,22 +2,22 @@ import flexsearch, { SearchOptions } from "flexsearch";
 // @ts-ignore
 const { Document } = flexsearch;
 
-import { TextIndexBase } from "./TextIndex";
+import { TextIndexBase, TextIndexBaseOptions } from "./TextIndex";
 
 export class TFlexsearchIndex extends TextIndexBase {
   static usesAddOne = true;
   static requiresId = false;
   static usesPagination = true;
 
-  index: typeof Document;
+  #index: typeof Document;
 
-  constructor(fields: string[]) {
-    super();
-    this.index = new Document({ index: fields, store: false });
+  constructor({ fields }: TextIndexBaseOptions) {
+    super({ fields });
+    this.#index = new Document({ index: fields, store: false });
   }
 
   addOne(id: number, item: any) {
-    this.index.add(id, item);
+    this.#index.add(id, item);
   }
 
   search(
@@ -27,7 +27,7 @@ export class TFlexsearchIndex extends TextIndexBase {
     let { page, perPage, ...rest } = options;
     page = page || 0;
     perPage = perPage || 20;
-    const results = this.index.search(query, {
+    const results = this.#index.search(query, {
       ...rest,
       offset: 0,
       limit: perPage * (page + 1),

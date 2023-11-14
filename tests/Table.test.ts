@@ -133,16 +133,31 @@ describe("Table", () => {
 
     it("returns facets", () => {
       const result = t.search({});
-      expect(result.facets.brand.length).toEqual(6);
-      expect(result.facets.categories.length).toEqual(30);
-      expect(result.facets.price.length).toEqual(20);
+      expect(result.facets.brand.pagination.total).toEqual(6);
+      expect(result.facets.brand.items.length).toEqual(6);
+
+      expect(result.facets.categories.items.length).toEqual(30);
+      expect(result.facets.categories.pagination.total).toEqual(30);
+      expect(result.facets.categories.pagination.perPage).toEqual(100);
+
+      expect(result.facets.price.items.length).toEqual(20);
+      expect(result.facets.price.pagination.total).toEqual(29);
+      expect(result.facets.price.pagination.perPage).toEqual(20);
+    });
+
+    it("calculates state for numeric facets", () => {
+      const result = t.search({});
+      expect(result.facets.price.stats).toEqual({
+        min: 2.99,
+        max: 999.99,
+      });
     });
 
     it("returns facet sorted by frequency", () => {
       const result = t.search({});
-      expect(result.facets.brand.length).toEqual(6);
-      expect(result.facets.brand[0]).toEqual(["Acer", 23]);
-      expect(result.facets.brand[5]).toEqual(["72-9301", 1]);
+      expect(result.facets.brand.items.length).toEqual(6);
+      expect(result.facets.brand.items[0]).toEqual(["Acer", 23]);
+      expect(result.facets.brand.items[5]).toEqual(["72-9301", 1]);
     });
 
     it("returns facet values for string column", () => {
@@ -150,15 +165,15 @@ describe("Table", () => {
         facetFilter: { brand: "Acer" },
       });
       expect(result.items.length).toEqual(20);
-      expect(result.facets.brand).toEqual([["Acer", 23]]);
+      expect(result.facets.brand.items.filter(([, y]) => y > 0)).toEqual([["Acer", 23]]);
     });
 
-    it.skip("returns facet values for array column", () => {
+    it("returns facet values for array column", () => {
       let result = t.search({
         facetFilter: { categories: "Cameras & Camcorders" },
       });
       expect(result.items.length).toEqual(1);
-      expect(result.facets.categories).toEqual([
+      expect(result.facets.categories.items.filter(([, y]) => y > 0)).toEqual([
         ["Cameras & Camcorders", 1],
         ["Digital Cameras", 1],
         ["Point & Shoot Cameras", 1],

@@ -1,26 +1,26 @@
 import MiniSearch, { SearchOptions } from "minisearch";
-import { TextIndexBase } from "./TextIndex";
+import { TextIndexBase, TextIndexBaseOptions } from "./TextIndex";
 
 export class TMinisearchIndex extends TextIndexBase {
   static usesAddAll = true;
   static requiresId = true;
   static usesPagination = false;
 
-  index: MiniSearch<any>;
+  #index: MiniSearch<any>;
 
-  constructor(fields: string[]) {
-    super();
-    const index = new MiniSearch({
+  constructor({ fields }: TextIndexBaseOptions) {
+    super({ fields });
+    this.#index = new MiniSearch({
       fields,
       storeFields: [],
     });
   }
 
   addAll(items: any[]) {
-    this.index.addAll(items);
+    this.#index.addAll(items);
   }
 
   search(query, options?: SearchOptions) {
-    return this.index.search(query, options).map((x) => x.id);
+    return this.#index.search(query, options).map((x) => x.id);
   }
 }

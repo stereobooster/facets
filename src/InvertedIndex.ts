@@ -1,5 +1,7 @@
 import { SparseTypedFastBitSet } from "typedfastbitset";
 
+export type FacetValue<K = unknown> = [K, number, SparseTypedFastBitSet];
+
 export class InvertedIndex<K = unknown> {
   add(value: K, id: number): void {
     throw new Error("Not implemented");
@@ -7,7 +9,7 @@ export class InvertedIndex<K = unknown> {
   get(value: K): SparseTypedFastBitSet {
     throw new Error("Not implemented");
   }
-  topValues(): Array<[K, number, SparseTypedFastBitSet]> {
+  topValues(): Array<FacetValue<K>> {
     throw new Error("Not implemented");
   }
 }
@@ -33,11 +35,8 @@ export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
   }
 
   topValues() {
-    // TOOD: memoize one
-    // TOOD: sort options
-    // TOOD: page, perPage
     return [...this.index.entries()]
-      .map(([k, v]) => [k, v.size(), v] as [K, number, SparseTypedFastBitSet])
+      .map(([k, v]) => [k, v.size(), v] as FacetValue<K>)
       .sort((a, b) => b[1] - a[1]);
   }
 }

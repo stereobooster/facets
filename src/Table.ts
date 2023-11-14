@@ -1,5 +1,5 @@
 import { TextIndex } from "./TextIndex";
-import { InvertedIndex } from "./InvertedIndex";
+import { FacetValue, InvertedIndex } from "./InvertedIndex";
 import { SparseTypedFastBitSet } from "typedfastbitset";
 import {
   FacetFilter,
@@ -22,15 +22,17 @@ type SortOptions = {
   options?: Intl.CollatorOptions;
 };
 
+type Facet = {
+  indexer?: typeof InvertedIndex;
+  perPage?: number;
+  // TODO: option to filter out or left zeroes
+  // TODO: sort for facet: frequency, selected, value itself
+};
+
 type Column = SortOptions & {
   type: "string" | "number" | "boolean";
   isArray?: boolean;
-  facet?:
-    | boolean
-    | {
-        indexer?: typeof InvertedIndex;
-        perPage?: number;
-      };
+  facet?: boolean | Facet;
   text?: boolean;
 };
 
@@ -52,14 +54,27 @@ export type SearchOptions<I = unknown> = {
   // filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
 };
 
+type FacetStats = {
+  min: number;
+  max: number;
+};
+
+type FacetResult = {
+  items: Array<[SupportedColumnTypes, number]>;
+  pagination: Pagination;
+  stats?: FacetStats;
+};
+
+type Pagination = {
+  perPage: number;
+  page: number;
+  total: number;
+};
+
 export type SearchResults<I = unknown> = {
-  pagination: {
-    perPage: number;
-    page: number;
-    total: number;
-  };
   items: I[];
-  facets: Record<string, Array<[SupportedColumnTypes, number]>>;
+  pagination: Pagination;
+  facets: Record<string, FacetResult>;
 };
 
 export class Table {
@@ -168,6 +183,7 @@ export class Table {
   }
 
   // TODO facets:
+  // - facets should stay the same unless there are other facets or other filters
   // - if number of items in result is small it is cheaper to build facets from scratch
   // - sort facets. By default sorted by frequency
   #getFacets(resultSet?: SparseTypedFastBitSet, facetFilter?: FacetFilter) {
@@ -176,34 +192,56 @@ export class Table {
       // @ts-expect-error fix later
       const perPage = this.#options.schema[facet].facet?.perPage || 20;
       let facetItems = ff[facet];
-      if (facetFilter && facetFilter[facet]) {
+      if (
+        facetFilter &&
+        facetFilter[facet] &&
+        !this.#options.schema[facet].isArray
+      ) {
         const filter = facetFilter[facet];
         if (Array.isArray(filter)) {
-          facetItems = facetItems.filter(([facetItem]) =>
-            filter.includes(facetItem)
+          facetItems = facetItems.map(([x, y, z]) =>
+            filter.includes(x) ? [x, y, z] : [x, 0, z]
           );
         } else {
-          facetItems = facetItems.filter(([facetItem]) => facetItem === filter);
+          facetItems = facetItems.filter(([x, y, z]) =>
+            x == filter ? [x, y, z] : [x, 0, z]
+          );
         }
-        // TODO: put the rest of filters with 0
-        // TODO: what about co-occuring facets in array column?
       }
       if (resultSet) {
         // TODO: we need to intersect only enough for the page
         facetItems = facetItems
           .map(([x, y, z]) => {
+            if (y === 0) return [x, y, z] as FacetValue<SupportedColumnTypes>;
             const temp = z.new_intersection(resultSet);
-            return [x, temp.size(), temp] as [
-              SupportedColumnTypes,
-              number,
-              SparseTypedFastBitSet
-            ];
+            return [x, temp.size(), temp] as FacetValue<SupportedColumnTypes>;
           })
           .sort((a, b) => b[1] - a[1]);
       }
-      res[facet] = facetItems.slice(0, perPage).map(([x, y]) => [x, y]);
+      let stats: FacetStats | undefined;
+      if (this.#options.schema[facet].type === "number") {
+        // if facet is sorted by value than `first` and `last` are `min` and `max`
+        const values = [] as any[];
+        facetItems.forEach(([x]) => {
+          if (x != null) values.push(x);
+        });
+        stats = {
+          min: Math.min(...values),
+          max: Math.max(...values),
+        };
+      }
+      res[facet] = {
+        items: facetItems.slice(0, perPage).map(([x, y]) => [x, y]),
+        pagination: {
+          page: 0,
+          perPage,
+          // TODO: this will change depending on zeroes
+          total: ff[facet].length,
+        },
+        stats,
+      };
       return res;
-    }, {} as Record<string, Array<[SupportedColumnTypes, number]>>);
+    }, {} as Record<string, FacetResult>);
   }
 
   #getFullFacets() {
@@ -211,7 +249,7 @@ export class Table {
       this.#facetMemo = Object.keys(this.#indexes).reduce((res, facet) => {
         res[facet] = this.#indexes[facet].topValues() as any;
         return res;
-      }, {} as Record<string, Array<[SupportedColumnTypes, number, SparseTypedFastBitSet]>>);
+      }, {} as Record<string, Array<FacetValue<SupportedColumnTypes>>>);
     }
     return this.#facetMemo;
   }
@@ -227,8 +265,7 @@ export class Table {
 
     const textIndexClass = this.#options.textIndex;
     if (textIndexClass) {
-      // @ts-expect-error fix later
-      this.#textIndex = new textIndexClass(searchableFields);
+      this.#textIndex = new textIndexClass({ fields: searchableFields });
     }
 
     this.#indexes = {};

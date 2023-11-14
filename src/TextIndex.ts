@@ -1,11 +1,16 @@
-export type TextOptions = {};
+export type TextSearchOptions = {};
+export type TextIndexBaseOptions = {
+  fields: string[];
+};
 
 export class TextIndexBase {
   static usesAddOne = false;
   static usesAddAll = false;
   static requiresId = false;
 
-  search(query: string, options?: TextOptions): Array<number> {
+  constructor(opt: TextIndexBaseOptions) {}
+
+  search(query: string, options?: TextSearchOptions): Array<number> {
     throw new Error("not impelemted");
   }
   addAll(values: any[]): void {
