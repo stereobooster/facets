@@ -5,18 +5,19 @@
 - workspace
   - main package
     - MVP
+      - is it time for schema?
+      - mapPaginate - function to map item only enough to fill current page
+      - [ ] facets
+      - [ ] min, max for numeric facets
       - [ ] filter by facets with null
       - [ ] sort results by relevance
       - [ ] text search
       - [ ] filter by callback (for numeric ranges)
-      - [ ] facets
-        - sort facets by frequency, etc.
-        - facet after filter
+      - [ ] function to fetch more facets data (pagination)
     - typescript signature
     - Post MVP
       - [ ] search for facets
-        - pagination
-      - built in prefix search based on TrieMap
+      - built-in prefix search based on TrieMap
         - through facet filter
       - memoization for consequent operations
         - search narrowing

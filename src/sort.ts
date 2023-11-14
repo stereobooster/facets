@@ -1,4 +1,4 @@
-type NullsOrder = "first" | "last";
+export type NullsOrder = "first" | "last";
 
 export function sortNulls(
   order: NullsOrder | undefined,

@@ -7,7 +7,7 @@ export class InvertedIndex<K = unknown> {
   get(value: K): SparseTypedFastBitSet {
     throw new Error("Not implemented");
   }
-  topValues(): Array<[K, number]> {
+  topValues(): Array<[K, number, SparseTypedFastBitSet]> {
     throw new Error("Not implemented");
   }
 }
@@ -37,7 +37,7 @@ export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
     // TOOD: sort options
     // TOOD: page, perPage
     return [...this.index.entries()]
-      .map(([k, v]) => [k, v.size()] as [K, number])
+      .map(([k, v]) => [k, v.size(), v] as [K, number, SparseTypedFastBitSet])
       .sort((a, b) => b[1] - a[1]);
   }
 }

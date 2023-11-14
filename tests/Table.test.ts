@@ -4,10 +4,34 @@ import { readFileSync } from "node:fs";
 import { Table } from "../src/Table";
 // @ts-expect-error need node types
 const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40);
+const schema = {
+  brand: {
+    type: "string" as const,
+    facet: true,
+  },
+  categories: {
+    type: "string" as const,
+    isArray: true,
+    facet: { perPage: 100 },
+  },
+  price: {
+    type: "number" as const,
+    facet: true,
+  },
+  //   type: {
+  //     type: "string",
+  //   },
+  //   popularity: {
+  //     type: "number",
+  //   },
+  //   rating: {
+  //     type: "number",
+  //   },
+};
 
 describe("Table", () => {
   describe("without text and facets", () => {
-    const t = new Table({}, items);
+    const t = new Table({ schema }, items);
 
     it("returns results", () => {
       const result = t.search();
@@ -55,27 +79,9 @@ describe("Table", () => {
       });
     });
 
-    it("sorts results as string asc", () => {
-      const result = t.search({
-        sort: { field: "price", order: "asc" },
-        perPage: 40,
-      });
-      expect(result.items[0].price).toEqual(109.99);
-      expect(result.items[39].price).toEqual(999.99);
-    });
-
-    it("sorts results as string desc", () => {
-      const result = t.search({
-        sort: { field: "price", order: "desc" },
-        perPage: 40,
-      });
-      expect(result.items[0].price).toEqual(999.99);
-      expect(result.items[39].price).toEqual(109.99);
-    });
-
     it("sorts results as number asc", () => {
       const result = t.search({
-        sort: { field: "price", order: "asc", type: "number" },
+        sort: ["price", "asc"],
         perPage: 40,
       });
       expect(result.items[0].price).toEqual(2.99);
@@ -84,7 +90,7 @@ describe("Table", () => {
 
     it("sorts results as number desc", () => {
       const result = t.search({
-        sort: { field: "price", order: "desc", type: "number" },
+        sort: ["price", "desc"],
         perPage: 40,
       });
       expect(result.items[0].price).toEqual(999.99);
@@ -93,19 +99,7 @@ describe("Table", () => {
   });
 
   describe("with facets", () => {
-    const t = new Table(
-      {
-        facets: {
-          brand: {},
-          categories: { perPage: 100 },
-          price: {},
-          type: {},
-          popularity: {},
-          rating: {},
-        },
-      },
-      items
-    );
+    const t = new Table({ schema }, items);
 
     it("filters by number facet", () => {
       const result = t.search({ facetFilter: { price: 14.95 } });
@@ -149,6 +143,27 @@ describe("Table", () => {
       expect(result.facets.brand.length).toEqual(6);
       expect(result.facets.brand[0]).toEqual(["Acer", 23]);
       expect(result.facets.brand[5]).toEqual(["72-9301", 1]);
+    });
+
+    it("returns facet values for string column", () => {
+      let result = t.search({
+        facetFilter: { brand: "Acer" },
+      });
+      expect(result.items.length).toEqual(20);
+      expect(result.facets.brand).toEqual([["Acer", 23]]);
+    });
+
+    it.skip("returns facet values for array column", () => {
+      let result = t.search({
+        facetFilter: { categories: "Cameras & Camcorders" },
+      });
+      expect(result.items.length).toEqual(1);
+      expect(result.facets.categories).toEqual([
+        ["Cameras & Camcorders", 1],
+        ["Digital Cameras", 1],
+        ["Point & Shoot Cameras", 1],
+        ["360 & Panoramic Cameras", 1],
+      ]);
     });
   });
 });
