@@ -97,9 +97,9 @@ describe("Table", () => {
       {
         facets: {
           brand: {},
-          categories: {},
-          type: {},
+          categories: { perPage: 100 },
           price: {},
+          type: {},
           popularity: {},
           rating: {},
         },
@@ -128,7 +128,27 @@ describe("Table", () => {
         facetFilter: { categories: "360 & Panoramic Cameras" },
       });
       expect(result.items[0].categories).toEqual(categories);
+
+      result = t.search({
+        facetFilter: {
+          categories: ["Digital Cameras", "Point & Shoot Cameras"],
+        },
+      });
+      expect(result.items[0].categories).toEqual(categories);
     });
-    
+
+    it("returns facets", () => {
+      const result = t.search({});
+      expect(result.facets.brand.length).toEqual(6);
+      expect(result.facets.categories.length).toEqual(30);
+      expect(result.facets.price.length).toEqual(20);
+    });
+
+    it("returns facet sorted by frequency", () => {
+      const result = t.search({});
+      expect(result.facets.brand.length).toEqual(6);
+      expect(result.facets.brand[0]).toEqual(["Acer", 23]);
+      expect(result.facets.brand[5]).toEqual(["72-9301", 1]);
+    });
   });
 });

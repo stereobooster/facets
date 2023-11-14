@@ -7,8 +7,8 @@ import { IMapIndex } from "./IMapIndex";
 
 type Facet = {
   indexer?: typeof InvertedIndex;
-  page?: number;
-  perPage?: string[];
+  // page?: number;
+  perPage?: number;
 };
 
 type TableOptions = {
@@ -30,7 +30,7 @@ export type SearchOptions<I = unknown> = {
   // for string: locale, options (Collator)
   sort?: SortOptions;
   facetFilter?: FacetFilter;
-  filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
+  // filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
 };
 
 export type SearchResults<I = unknown> = {
@@ -40,7 +40,7 @@ export type SearchResults<I = unknown> = {
     total: number;
   };
   items: I[];
-  facets: any;
+  facets: Record<string, Array<[string, number]>>;
 };
 
 export class Table {
@@ -52,6 +52,7 @@ export class Table {
   #indexes: Record<string, InvertedIndex>;
   #options: TableOptions;
   #textIndex: InstanceType<TextIndex>;
+  #facetMemo: Record<string, Array<[string, number]>>;
 
   constructor(options: TableOptions, items: any[] = []) {
     this.#options = options;
@@ -67,7 +68,8 @@ export class Table {
     let sortArr: Array<number> | undefined;
 
     if (this.#textIndex && options?.query) {
-      sortArr = this.#textIndex.search(options?.query, options);
+      // TODO: handle pagination - if there are no filters and sorting
+      sortArr = this.#textIndex.search(options?.query);
       const filteredRows = new SparseTypedFastBitSet(sortArr);
       resultSet = resultSet
         ? // @ts-expect-error
@@ -98,10 +100,11 @@ export class Table {
 
     let result = resultArr?.map((id) => this.#items[id]);
 
-    if (options?.filterBy) {
-      if (!result) result = this.#items;
-      result = result.filter(options?.filterBy);
-    }
+    // if (options?.filterBy) {
+    //   if (!result) result = this.#items;
+    //   result = result.filter(options?.filterBy);
+    //   // resultSet = this requires id
+    // }
 
     if (options?.sort) {
       if (!result) {
@@ -111,15 +114,11 @@ export class Table {
       result = result.sort(sort(options.sort));
     }
 
-    if (!result) result = this.#items;
+    if (!result) {
+      result = this.#items;
+    }
 
-    // TODO facets:
-    // - if number of items in result is small it is cheaper to build facets from scratch
-    // - if number of values in facet is small it is easier to intersect result with facets
-    // - if there is a filter by the facet it's much easier to build this facet
-    //   - intersect only selected
-    //   - everything else with 0
-
+    const facets = this.#getFacets(resultSet, options?.facetFilter);
     const page = options?.page || 0;
     const perPage = options?.perPage || 20;
     return {
@@ -129,8 +128,37 @@ export class Table {
         page,
         total: result.length,
       },
-      facets: {},
+      facets,
     };
+  }
+
+  // TODO facets:
+  // - if number of items in result is small it is cheaper to build facets from scratch
+  // - if number of values in facet is small it is easier to intersect result with facets
+  // - if there is a filter by the facet it's much easier to build this facet
+  //   - intersect only selected
+  //   - everything else with 0
+  // - sort facets. By default sorted by frequency
+  #getFacets(resultSet?: SparseTypedFastBitSet, facetFilter?: FacetFilter) {
+    const ff = this.#getFullFacets();
+    return Object.keys(ff).reduce((res, facet) => {
+      const perPage = this.#options.facets![facet].perPage || 20;
+      res[facet] = ff[facet].slice(0, perPage);
+      return res;
+    }, {});
+  }
+
+  #getFullFacets() {
+    if (!this.#facetMemo) {
+      this.#facetMemo = Object.keys(this.#options.facets || {}).reduce(
+        (res, facet) => {
+          res[facet] = this.#indexes[facet].topValues();
+          return res;
+        },
+        {}
+      );
+    }
+    return this.#facetMemo;
   }
 
   #buildIndex(items: any[]) {

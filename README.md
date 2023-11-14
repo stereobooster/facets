@@ -11,8 +11,7 @@
       - [ ] filter by callback (for numeric ranges)
       - [ ] facets
         - sort facets by frequency, etc.
-        - limit
-    - tests
+        - facet after filter
     - typescript signature
     - Post MVP
       - [ ] search for facets
