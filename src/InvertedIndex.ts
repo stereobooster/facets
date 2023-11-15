@@ -9,7 +9,7 @@ export class InvertedIndex<K = unknown> {
   get(value: K): SparseTypedFastBitSet {
     throw new Error("Not implemented");
   }
-  topValues(): Array<FacetValue<K>> {
+  values(): Array<FacetValue<K>> {
     throw new Error("Not implemented");
   }
 }
@@ -25,18 +25,20 @@ export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
   index: Maplike<K, SparseTypedFastBitSet>;
 
   add(value: K, id: number) {
+    if (value === undefined) value = null as any;
     if (!this.index.has(value))
       this.index.set(value, new SparseTypedFastBitSet());
     this.index.get(value)!.add(id);
   }
 
   get(value: K) {
+    if (value === undefined) value = null as any;
     return this.index.get(value) || new SparseTypedFastBitSet();
   }
 
-  topValues() {
-    return [...this.index.entries()]
-      .map(([k, v]) => [k, v.size(), v] as FacetValue<K>)
-      .sort((a, b) => b[1] - a[1]);
+  values() {
+    return [...this.index.entries()].map(
+      ([k, v]) => [k, v.size(), v] as FacetValue<K>
+    );
   }
 }

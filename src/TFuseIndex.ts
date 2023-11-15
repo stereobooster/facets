@@ -1,5 +1,5 @@
 import Fuse, { IFuseOptions, FuseSearchOptions } from "fuse.js";
-import { TextIndexBase, TextIndexBaseOptions } from "./TextIndex";
+import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
 
 export class TFuseIndex extends TextIndexBase {
   static usesAddAll = true;
@@ -21,7 +21,7 @@ export class TFuseIndex extends TextIndexBase {
     this.#index = new Fuse(items, this.#options);
   }
 
-  search(query, options?: FuseSearchOptions) {
+  search(query, options?: FuseSearchOptions & TextSearchOptions) {
     return this.#index.search(query, options).map((x) => x.refIndex);
   }
 }

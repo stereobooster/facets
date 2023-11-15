@@ -25,8 +25,12 @@ type SortOptions = {
 type Facet = {
   indexer?: typeof InvertedIndex;
   perPage?: number;
+  /**
+   * @default ["frequency", "desc"]
+   */
+  sort?: ["value" | "frequency", SortDirection];
+  // TODO: selected first
   // TODO: option to filter out or left zeroes
-  // TODO: sort for facet: frequency, selected, value itself
 };
 
 type Column = SortOptions & {
@@ -80,7 +84,7 @@ export type SearchResults<I = unknown> = {
 export class Table {
   #items: any[];
   #universe: SparseTypedFastBitSet;
-  #indexes: Record<string, InvertedIndex>;
+  #indexes: Record<string, InvertedIndex<SupportedColumnTypes>>;
   #options: TableOptions;
   #textIndex: InstanceType<TextIndex>;
   #facetMemo: Record<
@@ -102,8 +106,10 @@ export class Table {
     let sortArr: Array<number> | undefined;
 
     if (this.#textIndex && options?.query) {
-      // TODO: handle pagination - if there are no filters and sorting
-      sortArr = this.#textIndex.search(options?.query);
+      // TODO: handle pagination - if there are no filters and sorting and no facets
+      sortArr = this.#textIndex.search(options?.query, {
+        perPage: this.#items.length,
+      });
       const filteredRows = new SparseTypedFastBitSet(sortArr);
       resultSet = resultSet
         ? // @ts-expect-error
@@ -216,7 +222,7 @@ export class Table {
             const temp = z.new_intersection(resultSet);
             return [x, temp.size(), temp] as FacetValue<SupportedColumnTypes>;
           })
-          .sort((a, b) => b[1] - a[1]);
+          .sort(this.#sortForFacet(facet));
       }
       let stats: FacetStats | undefined;
       if (this.#options.schema[facet].type === "number") {
@@ -247,11 +253,27 @@ export class Table {
   #getFullFacets() {
     if (!this.#facetMemo) {
       this.#facetMemo = Object.keys(this.#indexes).reduce((res, facet) => {
-        res[facet] = this.#indexes[facet].topValues() as any;
+        res[facet] = this.#indexes[facet]
+          .values()
+          .sort(this.#sortForFacet(facet));
         return res;
       }, {} as Record<string, Array<FacetValue<SupportedColumnTypes>>>);
     }
     return this.#facetMemo;
+  }
+
+  #sortForFacet(facet: string) {
+    // @ts-expect-error fix later
+    const config = this.#options.schema[facet].facet?.sort || [
+      "frequency",
+      "desc",
+    ];
+    return sort({
+      field: config[0] === "frequency" ? 1 : 0,
+      order: config[1],
+      type:
+        config[0] === "frequency" ? "number" : this.#options.schema[facet].type,
+    });
   }
 
   #buildIndex(items: any[]) {

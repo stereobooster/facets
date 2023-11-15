@@ -2,7 +2,7 @@ import flexsearch, { SearchOptions } from "flexsearch";
 // @ts-ignore
 const { Document } = flexsearch;
 
-import { TextIndexBase, TextIndexBaseOptions } from "./TextIndex";
+import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
 
 export class TFlexsearchIndex extends TextIndexBase {
   static usesAddOne = true;
@@ -22,9 +22,9 @@ export class TFlexsearchIndex extends TextIndexBase {
 
   search(
     query,
-    options: SearchOptions & { page?: number; perPage?: number } = {}
+    options?: SearchOptions & TextSearchOptions
   ) {
-    let { page, perPage, ...rest } = options;
+    let { page, perPage, ...rest } = options || {};
     page = page || 0;
     perPage = perPage || 20;
     const results = this.#index.search(query, {

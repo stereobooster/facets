@@ -80,12 +80,12 @@ export function sortGeneral(opt: SortGeneralOptions) {
   return sortNulls(opt.nulls, sorters[opt.type || "default"](opt));
 }
 
-export function sortByField(field: string, cb: (a: any, b: any) => number) {
+export function sortByField(field: string | number, cb: (a: any, b: any) => number) {
   return (a: any, b: any) => cb(a[field], b[field]);
 }
 
 export type SortOptions = SortGeneralOptions & {
-  field: string;
+  field: string | number;
 };
 
 // TODO: sort by many fields

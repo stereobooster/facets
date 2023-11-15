@@ -1,4 +1,7 @@
-export type TextSearchOptions = {};
+export type TextSearchOptions = {
+  page?: number;
+  perPage?: number;
+};
 export type TextIndexBaseOptions = {
   fields: string[];
 };

@@ -1,5 +1,5 @@
 import MiniSearch, { SearchOptions } from "minisearch";
-import { TextIndexBase, TextIndexBaseOptions } from "./TextIndex";
+import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
 
 export class TMinisearchIndex extends TextIndexBase {
   static usesAddAll = true;
@@ -20,7 +20,7 @@ export class TMinisearchIndex extends TextIndexBase {
     this.#index.addAll(items);
   }
 
-  search(query, options?: SearchOptions) {
+  search(query, options?: SearchOptions & TextSearchOptions) {
     return this.#index.search(query, options).map((x) => x.id);
   }
 }

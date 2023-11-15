@@ -6,7 +6,9 @@
   - main package
     - MVP
       - [ ] facets
-        - `null`, `undefined` in facets
+        - I don't need text search pagination in order to build all facets intersection
+        - it takes `n!` intersections, but only if there is more than one facet or text search
+        - I need to intersect only selected value plus enough for the first page
       - [ ] sort results by relevance
       - [ ] filter by callback (for numeric ranges)
       - [ ] function to fetch more facets data (pagination)
@@ -17,7 +19,6 @@
       - built-in prefix search based on TrieMap
         - through facet filter
       - memoization for consequent operations
-        - `useMemo` - LRU
         - search narrowing
         - pagination
         - sorting
@@ -26,6 +27,7 @@
       - sort by more than one column
       - highilght search results
       - event dispatcher to allow async loading, async indexing
+        - https://github.com/developit/mitt
       - web worker
       - date time columns
       - more than one level objects
@@ -41,3 +43,6 @@
   - demo with table / cards
   - query string parser
   - demo with graph?
+  - alternative solutions
+    - test CSV instead of JSON (memory footprint)
+    - memoize sort order in `TypedArray` (Int16)

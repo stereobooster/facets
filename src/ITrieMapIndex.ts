@@ -16,11 +16,4 @@ export class ITrieMapIndex<K> extends InvertedIndexMaplike<K> {
       return p;
     }, new SparseTypedFastBitSet());
   }
-
-  topValuesLike(query) {
-    return this.index
-      .find(query)
-      .map(([k, v]) => [k, v.size(), v] as const)
-      .sort((a, b) => b[1] - a[1]);
-  }
 }
