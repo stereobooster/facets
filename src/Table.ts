@@ -7,7 +7,62 @@ import { Pagination, paginate } from "./utils";
 
 type SupportedFieldTypes = string | number | boolean | null;
 
-type FacetFilter = Record<string, SupportedFieldTypes[]>;
+type FieldConfig = SortConfig & {
+  type: "string" | "number" | "boolean";
+  isArray?: boolean;
+  facet?: boolean | FacetConfig;
+  text?: boolean;
+};
+
+type Schema = Record<string, FieldConfig>;
+
+type TableConfig<S extends Schema> = {
+  schema: S;
+  textIndex?: TextIndex;
+  sortConfig?: SortConfig;
+  // idKey?: string; - needs more work
+};
+
+type FacetFilter<S extends Schema> = {
+  [K in keyof S]?: S[K]["type"] extends "string"
+    ? Array<string | null>
+    : S[K]["type"] extends "number"
+    ? Array<number | null>
+    : S[K]["type"] extends "boolean"
+    ? Array<boolean | null>
+    : never;
+};
+
+type Item<S extends Schema> = {
+  [K in keyof S]?: S[K]["type"] extends "string"
+    ? string | null | Array<string | null>
+    : S[K]["type"] extends "number"
+    ? number | null | Array<number | null>
+    : S[K]["type"] extends "boolean"
+    ? boolean | null | Array<boolean | null>
+    : never;
+};
+
+type FacetStats = {
+  min: number;
+  max: number;
+};
+
+type FacetResult<T = SupportedFieldTypes> = {
+  items: Array<[T | null, number]>;
+  pagination: Pagination;
+  stats: T extends number ? FacetStats : undefined;
+};
+
+type FacetResults<S extends Schema> = {
+  [K in keyof S]: S[K]["type"] extends "string"
+    ? FacetResult<string>
+    : S[K]["type"] extends "number"
+    ? FacetResult<number>
+    : S[K]["type"] extends "boolean"
+    ? FacetResult<boolean>
+    : never;
+};;
 
 type FacetFilterInternal = Record<
   string,
@@ -51,61 +106,32 @@ type FacetConfig = {
   selectedFirst?: boolean;
 };
 
-type FieldConfig = SortConfig & {
-  type: "string" | "number" | "boolean";
-  isArray?: boolean;
-  facet?: boolean | FacetConfig;
-  text?: boolean;
-};
-
-type Schema = Record<string, FieldConfig>;
-
-type TableConfig = {
-  schema: Schema;
-  textIndex?: TextIndex;
-  sortConfig?: SortConfig;
-  // idKey?: string; - needs more work
-};
-
-export type SearchOptions<I = unknown> = {
+export type SearchOptions<S extends Schema> = {
   query?: string;
   page?: number;
   perPage?: number;
   sort?: [string, SortDirection];
-  facetFilter?: FacetFilter;
-  // filterBy?: <I>(item: I) => boolean; // eslint-disable-line no-unused-vars
+  facetFilter?: FacetFilter<S>;
 };
 
-type FacetStats = {
-  min: number;
-  max: number;
-};
-
-type FacetResult = {
-  items: Array<[SupportedFieldTypes, number]>;
-  pagination: Pagination;
-  stats?: FacetStats;
-};
-
-export type SearchResults<I = unknown> = {
+export type SearchResults<S extends Schema, I> = {
   items: I[];
   pagination: Pagination;
-  facets: Record<string, FacetResult>;
+  facets: FacetResults<S>;
 };
 
-export class Table {
-  #items: any[];
-  // #universe: SparseTypedFastBitSet;
+export class Table<S extends Schema, I extends Item<S>> {
+  #items: I[];
   #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
-  #options: TableConfig;
+  #config: TableConfig<S>;
   #textIndex: InstanceType<TextIndex>;
   #fullFacets: Record<
     string,
     Array<[SupportedFieldTypes, number, SparseTypedFastBitSet]>
   >;
 
-  constructor(options: TableConfig, items: any[] = []) {
-    this.#options = options;
+  constructor(config: TableConfig<S>, items: I[] = []) {
+    this.#config = config;
     this.update(items);
   }
 
@@ -113,7 +139,7 @@ export class Table {
     this.#buildIndex(items);
   }
 
-  search(options?: SearchOptions): SearchResults<any> {
+  search(options?: SearchOptions<S>): SearchResults<S, I> {
     const { sortByText, idsByText, facetFilterInternal, idsByFacet } =
       this.#searchAll(options);
 
@@ -147,11 +173,11 @@ export class Table {
 
     return {
       ...paginate(items, options?.page, options?.perPage),
-      facets: this.#getFacets(facetFilterInternal, idsByText),
+      facets: this.#getFacets(facetFilterInternal, idsByText) as any,
     };
   }
 
-  facet(filed: string, options?: SearchOptions): FacetResult {
+  facet(filed: string, options?: SearchOptions<S>): FacetResult {
     const { idsByText, facetFilterInternal } = this.#searchAll(options);
     return this.#getFacet(
       filed,
@@ -174,7 +200,7 @@ export class Table {
     return { sortByText, idsByText };
   }
 
-  #searchFacets(facetFilter: FacetFilter | undefined) {
+  #searchFacets(facetFilter: FacetFilter<S> | undefined) {
     if (!facetFilter || Object.keys(facetFilter).length === 0)
       return { facetFilterInternal: undefined, idsByFacet: undefined };
 
@@ -213,7 +239,7 @@ export class Table {
     return { facetFilterInternal, idsByFacet };
   }
 
-  #searchAll(options?: SearchOptions) {
+  #searchAll(options?: SearchOptions<S>) {
     return {
       ...this.#searchText(options?.query),
       ...this.#searchFacets(options?.facetFilter),
@@ -264,12 +290,12 @@ export class Table {
 
     page = page || 0;
     // @ts-expect-error fix later
-    perPage = perPage || this.#options.schema[field].facet?.perPage || 20;
+    perPage = perPage || this.#config.schema[field].facet?.perPage || 20;
     // @ts-expect-error fix later
-    const showZeroes = this.#options.schema[field].facet?.showZeroes || true;
+    const showZeroes = this.#config.schema[field].facet?.showZeroes || true;
     const selectedFirst =
       // @ts-expect-error fix later
-      this.#options.schema[field].facet?.selectedFirst || false;
+      this.#config.schema[field].facet?.selectedFirst || false;
 
     const selected = facetFilter ? facetFilter[field]?.selected : [];
 
@@ -309,7 +335,7 @@ export class Table {
     }
 
     let stats: FacetStats | undefined;
-    if (this.#options.schema[field].type === "number") {
+    if (this.#config.schema[field].type === "number") {
       // if facet is sorted by value than `first` and `last` are `min` and `max`
       const values = [] as any[];
       newFacet.forEach(([x]) => {
@@ -343,22 +369,20 @@ export class Table {
     return sort({
       field,
       order,
-      type: this.#options.schema[field].isArray
+      type: this.#config.schema[field].isArray
         ? undefined
-        : this.#options.schema[field].type,
+        : this.#config.schema[field].type,
       locale:
-        this.#options.sortConfig?.locale || this.#options.schema[field].locale,
-      nulls:
-        this.#options.sortConfig?.nulls || this.#options.schema[field].nulls,
+        this.#config.sortConfig?.locale || this.#config.schema[field].locale,
+      nulls: this.#config.sortConfig?.nulls || this.#config.schema[field].nulls,
       options:
-        this.#options.sortConfig?.options ||
-        this.#options.schema[field].options,
+        this.#config.sortConfig?.options || this.#config.schema[field].options,
     });
   }
 
   #sortConfigForFacet(field: string): FacetSort {
     // @ts-expect-error fix later
-    return this.#options.schema[field].facet?.sort || ["frequency", "desc"];
+    return this.#config.schema[field].facet?.sort || ["frequency", "desc"];
   }
 
   #sortForFacet(field: string, selected?: SupportedFieldTypes[]) {
@@ -367,7 +391,7 @@ export class Table {
       field: config[0] === "frequency" ? 1 : 0,
       order: config[1],
       type:
-        config[0] === "frequency" ? "number" : this.#options.schema[field].type,
+        config[0] === "frequency" ? "number" : this.#config.schema[field].type,
     });
     if (selected && selected.length > 0) {
       return (a: any, b: any) => {
@@ -386,24 +410,21 @@ export class Table {
 
     // In order to use custom id field need to pass it to textIndexClass
     const idKey = "id"; //this.#options.idKey || "id";
-    const searchableFields = Object.entries(this.#options.schema)
+    const searchableFields = Object.entries(this.#config.schema)
       .filter(([, value]) => value.text)
       .map(([key]) => key);
 
-    const textIndexClass = this.#options.textIndex;
+    const textIndexClass = this.#config.textIndex;
     if (textIndexClass) {
       this.#textIndex = new textIndexClass({ fields: searchableFields });
     }
 
     this.#indexes = {};
-    Object.entries(this.#options.schema).forEach(([field, fieldConfig]) => {
+    Object.entries(this.#config.schema).forEach(([field, fieldConfig]) => {
       if (!fieldConfig.facet) return;
       // @ts-expect-error fix later
       this.#indexes[field] = new (fieldConfig.facet?.indexer || IMapIndex)();
     });
-
-    // this.#universe = new SparseTypedFastBitSet();
-    // if (items.length > 0) this.#universe.addRange(0, items.length - 1);
 
     items.forEach((item, id) => {
       if (textIndexClass?.requiresId) item[idKey] = id;

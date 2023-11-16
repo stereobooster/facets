@@ -3,7 +3,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { Table } from "../src/Table";
 // @ts-expect-error need node types
-const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40);
+const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40) as any[];
 const schema = {
   brand: {
     type: "string" as const,

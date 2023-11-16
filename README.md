@@ -8,7 +8,6 @@
       - filter by facet by numeric range
         - would allow better memoization
       - microbundle
-      - typescript signature
       - errors and warnings
     - Post MVP
       - event dispatcher to allow async loading, async indexing
