@@ -63,7 +63,7 @@ type Schema = Record<string, FieldConfig>;
 type TableConfig = {
   schema: Schema;
   textIndex?: TextIndex;
-  sortOptions?: SortConfig;
+  sortConfig?: SortConfig;
   // idKey?: string; - needs more work
 };
 
@@ -114,83 +114,71 @@ export class Table {
   }
 
   search(options?: SearchOptions): SearchResults<any> {
-    const { sortArr, textSearch, facetFilterInternal, facetSearch } =
-      this.#preSearch(options);
+    const { sortByText, rowsByText, facetFilterInternal, rowsByFacet } =
+      this.#searchAll(options);
 
-    const facets = this.#getFacets(facetFilterInternal, textSearch);
-
-    let resultArr: number[] | undefined;
-    if (facetSearch && textSearch) {
-      const resultSet = textSearch.new_intersection(facetSearch) as any;
+    let rowIds: number[] | undefined;
+    if (rowsByFacet && rowsByText) {
+      const resultSet = rowsByText.new_intersection(rowsByFacet) as any;
       if (options?.sort) {
-        resultArr = resultSet?.array();
+        rowIds = resultSet?.array();
       } else {
-        resultArr = sortArr!.filter((x) => resultSet?.has(x));
+        rowIds = sortByText!.filter((x) => resultSet?.has(x));
       }
-    } else if (facetSearch) {
-      resultArr = facetSearch?.array();
-    } else if (textSearch) {
-      resultArr = sortArr;
+    } else if (rowsByFacet) {
+      rowIds = rowsByFacet.array();
+    } else if (rowsByText) {
+      rowIds = sortByText;
     }
 
-    let result = resultArr?.map((id) => this.#items[id]);
+    let rows = rowIds?.map((id) => this.#items[id]);
 
     if (options?.sort) {
-      if (!result) {
+      if (!rows) {
         // because sort works in place
-        result = [...this.#items];
+        rows = [...this.#items];
       }
-      result = result.sort(this.#sortForResults(options.sort));
+      rows = rows.sort(this.#sortForResults(options.sort));
     }
 
-    if (!result) {
-      result = this.#items;
+    if (!rows) {
+      rows = this.#items;
     }
 
     return {
-      ...paginate(result, options?.page, options?.perPage),
-      facets,
+      ...paginate(rows, options?.page, options?.perPage),
+      facets: this.#getFacets(facetFilterInternal, rowsByText),
     };
   }
 
   facet(filed: string, options?: SearchOptions): FacetResult {
-    const { textSearch, facetFilterInternal } = this.#preSearch(options);
+    const { rowsByText, facetFilterInternal } = this.#searchAll(options);
     return this.#getFacet(
       filed,
       facetFilterInternal,
-      textSearch,
+      rowsByText,
       options?.page,
       options?.perPage
     );
   }
 
-  #preSearch(options?: SearchOptions) {
-    let sortArr: Array<number> | undefined;
-    let textSearch: SparseTypedFastBitSet | undefined = undefined;
-    if (this.#textIndex && options?.query) {
-      sortArr = this.#textIndex.search(options?.query, {
+  #searchText(query: string | undefined) {
+    let sortByText: Array<number> | undefined;
+    let rowsByText: SparseTypedFastBitSet | undefined = undefined;
+    if (this.#textIndex && query) {
+      sortByText = this.#textIndex.search(query, {
         perPage: this.#items.length,
       });
-      textSearch = new SparseTypedFastBitSet(sortArr);
+      rowsByText = new SparseTypedFastBitSet(sortByText);
     }
-
-    const [facetFilterInternal, facetSearch] = this.#getFacetFilters(
-      options?.facetFilter
-    );
-
-    return {
-      sortArr,
-      textSearch,
-      facetFilterInternal,
-      facetSearch,
-    };
+    return { sortByText, rowsByText };
   }
 
-  #getFacetFilters(facetFilter?: FacetFilter) {
+  #searchFacets(facetFilter: FacetFilter | undefined) {
     if (!facetFilter || Object.keys(facetFilter).length === 0)
-      return [undefined, undefined];
+      return { facetFilterInternal: undefined, rowsByFacet: undefined };
 
-    let filteredRows: SparseTypedFastBitSet | undefined;
+    let rowsByFacet: SparseTypedFastBitSet | undefined;
 
     const facetFilterInternal = Object.entries(facetFilter).reduce(
       (res, [field, selected]) => {
@@ -207,10 +195,10 @@ export class Table {
         });
         if (!set) return res;
 
-        if (!filteredRows) {
-          filteredRows = set.clone();
+        if (!rowsByFacet) {
+          rowsByFacet = set.clone();
         } else {
-          filteredRows.intersection(set);
+          rowsByFacet.intersection(set);
         }
 
         res[field] = {
@@ -222,7 +210,14 @@ export class Table {
       {} as FacetFilterInternal
     );
 
-    return [facetFilterInternal, filteredRows] as const;
+    return { facetFilterInternal, rowsByFacet };
+  }
+
+  #searchAll(options?: SearchOptions) {
+    return {
+      ...this.#searchText(options?.query),
+      ...this.#searchFacets(options?.facetFilter),
+    };
   }
 
   #getFacetSetExcept(
@@ -233,17 +228,17 @@ export class Table {
     facetFilter = { ...facetFilter };
     delete facetFilter[field];
 
-    const keys = Object.keys(facetFilter);
+    const fields = Object.keys(facetFilter);
     let result: SparseTypedFastBitSet | undefined;
-    keys.forEach((key) => {
+    fields.forEach((field) => {
       if (!result) {
         result =
-          keys.length === 1
-            ? facetFilter![key].set
-            : facetFilter![key].set.clone();
+          fields.length === 1
+            ? facetFilter![field].set
+            : facetFilter![field].set.clone();
         return;
       }
-      result.intersection(facetFilter![key].set);
+      result.intersection(facetFilter![field].set);
     });
     return result;
   }
@@ -352,11 +347,11 @@ export class Table {
         ? undefined
         : this.#options.schema[field].type,
       locale:
-        this.#options.sortOptions?.locale || this.#options.schema[field].locale,
+        this.#options.sortConfig?.locale || this.#options.schema[field].locale,
       nulls:
-        this.#options.sortOptions?.nulls || this.#options.schema[field].nulls,
+        this.#options.sortConfig?.nulls || this.#options.schema[field].nulls,
       options:
-        this.#options.sortOptions?.options ||
+        this.#options.sortConfig?.options ||
         this.#options.schema[field].options,
     });
   }
