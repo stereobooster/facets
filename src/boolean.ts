@@ -28,19 +28,19 @@ export const difference = (...args: SparseTypedFastBitSet[]) => {
   return result as SparseTypedFastBitSet;
 };
 
-export type SupportedColumnTypes = string | number | boolean;
+export type SupportedFieldTypes = string | number | boolean | null;
 
 export type FacetFilter = Record<
   string,
-  SupportedColumnTypes | SupportedColumnTypes[]
+  SupportedFieldTypes | SupportedFieldTypes[]
 >;
 
 export type BoolFilter = OrFilter | AndFilter | EqFilter | NotFilter;
 
 type EqFilter = {
   op: "eq";
-  column: string;
-  value: SupportedColumnTypes;
+  field: string;
+  value: SupportedFieldTypes;
 };
 type OrFilter = {
   op: "or";
@@ -59,7 +59,7 @@ export function facetFilterToBool(ff: FacetFilter): BoolFilter {
   return {
     op: "and",
     val: Object.entries(ff)
-      .map(([column, value]) => {
+      .map(([field, value]) => {
         if (value === undefined) return;
         if (Array.isArray(value)) {
           if (value.length === 0) return;
@@ -67,14 +67,14 @@ export function facetFilterToBool(ff: FacetFilter): BoolFilter {
             op: "or",
             val: value.map((x) => ({
               op: "eq",
-              column,
+              field,
               value: x,
             })),
           };
         } else {
           return {
             op: "eq",
-            column,
+            field,
             value,
           };
         }
@@ -93,7 +93,7 @@ export function evalBool(
   function evalInternal(f: BoolFilter): SparseTypedFastBitSet {
     switch (f.op) {
       case "eq":
-        return indexes[f.column].get(f.value);
+        return indexes[f.field].get(f.value);
       case "not":
         return difference(universe, evalInternal(f.val));
       case "or":

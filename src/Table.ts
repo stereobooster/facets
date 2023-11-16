@@ -1,23 +1,26 @@
+import { SparseTypedFastBitSet } from "typedfastbitset";
 import { TextIndex } from "./TextIndex";
 import { FacetValue, InvertedIndex } from "./InvertedIndex";
-import { SparseTypedFastBitSet } from "typedfastbitset";
-
-import { NullsOrder, SortDirection, sort } from "./sort";
 import { IMapIndex } from "./IMapIndex";
+import { NullsOrder, SortDirection, sort } from "./sort";
+import { Pagination, paginate } from "./utils";
 
-type SupportedColumnTypes = string | number | boolean | null;
+type SupportedFieldTypes = string | number | boolean | null;
 
-type FacetFilter = Record<string, SupportedColumnTypes[]>;
+type FacetFilter = Record<string, SupportedFieldTypes[]>;
 
 type FacetFilterInternal = Record<
   string,
   {
     set: SparseTypedFastBitSet;
-    selected: SupportedColumnTypes[];
+    selected: SupportedFieldTypes[];
   }
 >;
 
-type SortOptions = {
+type SortConfig = {
+  /**
+   * @default "last"
+   */
   nulls?: NullsOrder;
   /**
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
@@ -31,32 +34,36 @@ type SortOptions = {
 
 type FacetSort = ["value" | "frequency", SortDirection];
 
-type Facet = {
+type FacetConfig = {
   indexer?: typeof InvertedIndex;
   perPage?: number;
   /**
    * @default ["frequency", "desc"]
    */
   sort?: FacetSort;
-  // TODO:
-  // selectedFirst?: boolean;
-  // TODO:
-  // showZeroes?: boolean;
+  /**
+   * @default true
+   */
+  showZeroes?: boolean;
+  /**
+   * @default false
+   */
+  selectedFirst?: boolean;
 };
 
-type Column = SortOptions & {
+type FieldConfig = SortConfig & {
   type: "string" | "number" | "boolean";
   isArray?: boolean;
-  facet?: boolean | Facet;
+  facet?: boolean | FacetConfig;
   text?: boolean;
 };
 
-type Schema = Record<string, Column>;
+type Schema = Record<string, FieldConfig>;
 
-type TableOptions = {
+type TableConfig = {
   schema: Schema;
   textIndex?: TextIndex;
-  sortOptions?: SortOptions;
+  sortOptions?: SortConfig;
   // idKey?: string; - needs more work
 };
 
@@ -75,15 +82,9 @@ type FacetStats = {
 };
 
 type FacetResult = {
-  items: Array<[SupportedColumnTypes, number]>;
+  items: Array<[SupportedFieldTypes, number]>;
   pagination: Pagination;
   stats?: FacetStats;
-};
-
-type Pagination = {
-  perPage: number;
-  page: number;
-  total: number;
 };
 
 export type SearchResults<I = unknown> = {
@@ -95,15 +96,15 @@ export type SearchResults<I = unknown> = {
 export class Table {
   #items: any[];
   #universe: SparseTypedFastBitSet;
-  #indexes: Record<string, InvertedIndex<SupportedColumnTypes>>;
-  #options: TableOptions;
+  #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
+  #options: TableConfig;
   #textIndex: InstanceType<TextIndex>;
-  #facetMemo: Record<
+  #fullFacets: Record<
     string,
-    Array<[SupportedColumnTypes, number, SparseTypedFastBitSet]>
+    Array<[SupportedFieldTypes, number, SparseTypedFastBitSet]>
   >;
 
-  constructor(options: TableOptions, items: any[] = []) {
+  constructor(options: TableConfig, items: any[] = []) {
     this.#options = options;
     this.update(items);
   }
@@ -139,22 +140,15 @@ export class Table {
         // because sort works in place
         result = [...this.#items];
       }
-      result = result.sort(this.#sortForResult(options.sort));
+      result = result.sort(this.#sortForResults(options.sort));
     }
 
     if (!result) {
       result = this.#items;
     }
 
-    const page = options?.page || 0;
-    const perPage = options?.perPage || 20;
     return {
-      items: result.slice(page * perPage, (page + 1) * perPage),
-      pagination: {
-        perPage,
-        page,
-        total: result.length,
-      },
+      ...paginate(result, options?.page, options?.perPage),
       facets,
     };
   }
@@ -199,17 +193,17 @@ export class Table {
     let filteredRows: SparseTypedFastBitSet | undefined;
 
     const facetFilterInternal = Object.entries(facetFilter).reduce(
-      (res, [facet, selected]) => {
+      (res, [field, selected]) => {
         let set: SparseTypedFastBitSet | undefined;
         selected.forEach((filterValue) => {
           if (!set) {
             set =
               selected.length === 1
-                ? this.#indexes[facet].get(filterValue)
-                : this.#indexes[facet].get(filterValue).clone();
+                ? this.#indexes[field].get(filterValue)
+                : this.#indexes[field].get(filterValue).clone();
             return;
           }
-          set.intersection(this.#indexes[facet].get(filterValue));
+          set.intersection(this.#indexes[field].get(filterValue));
         });
         if (!set) return res;
 
@@ -219,7 +213,7 @@ export class Table {
           filteredRows.intersection(set);
         }
 
-        res[facet] = {
+        res[field] = {
           set,
           selected,
         };
@@ -258,14 +252,14 @@ export class Table {
     facetFilter: FacetFilterInternal | undefined,
     textSearch: SparseTypedFastBitSet | undefined
   ) {
-    return Object.keys(this.#indexes).reduce((res, facet) => {
-      res[facet] = this.#getFacet(facet, facetFilter, textSearch);
+    return Object.keys(this.#indexes).reduce((res, field) => {
+      res[field] = this.#getFacet(field, facetFilter, textSearch);
       return res;
     }, {} as Record<string, FacetResult>);
   }
 
   #getFacet(
-    facet: string,
+    field: string,
     facetFilter: FacetFilterInternal | undefined,
     textSearch: SparseTypedFastBitSet | undefined,
     page?: number,
@@ -275,9 +269,16 @@ export class Table {
 
     page = page || 0;
     // @ts-expect-error fix later
-    perPage = perPage || this.#options.schema[facet].facet?.perPage || 20;
+    perPage = perPage || this.#options.schema[field].facet?.perPage || 20;
+    // @ts-expect-error fix later
+    const showZeroes = this.#options.schema[field].facet?.showZeroes || true;
+    const selectedFirst =
+      // @ts-expect-error fix later
+      this.#options.schema[field].facet?.selectedFirst || false;
 
-    const facetSearch = this.#getFacetSetExcept(facet, facetFilter);
+    const selected = facetFilter ? facetFilter[field]?.selected : [];
+
+    const facetSearch = this.#getFacetSetExcept(field, facetFilter);
     let resultSet: SparseTypedFastBitSet | undefined = undefined;
     if (facetSearch && textSearch) {
       resultSet = facetSearch.new_intersection(textSearch) as any;
@@ -287,24 +288,33 @@ export class Table {
       resultSet = textSearch;
     }
 
-    const newFacet = resultSet
-      ? ff[facet].map(([x, , z]) => {
+    let newFacet = resultSet
+      ? ff[field].map(([x, , z]) => {
           const zz = z.new_intersection(resultSet!);
           return [x, zz.size(), zz] as [
-            SupportedColumnTypes,
+            SupportedFieldTypes,
             number,
             SparseTypedFastBitSet
           ];
         })
-      : ff[facet];
+      : ff[field];
 
-    const sortConfig = this.#sortConfigForFacet(facet);
-    if (resultSet && sortConfig[0] === "frequency") {
-      newFacet.sort(this.#sortForFacet(facet));
+    if (resultSet && !showZeroes) {
+      newFacet = newFacet.filter(([x, y]) => y !== 0 || selected.includes(x));
+    }
+
+    const sortConfig = this.#sortConfigForFacet(field);
+    if (
+      (resultSet && sortConfig[0] === "frequency") ||
+      (selectedFirst && selected.length > 0)
+    ) {
+      newFacet.sort(
+        this.#sortForFacet(field, selectedFirst ? selected : undefined)
+      );
     }
 
     let stats: FacetStats | undefined;
-    if (this.#options.schema[facet].type === "number") {
+    if (this.#options.schema[field].type === "number") {
       // if facet is sorted by value than `first` and `last` are `min` and `max`
       const values = [] as any[];
       newFacet.forEach(([x]) => {
@@ -317,32 +327,24 @@ export class Table {
     }
 
     return {
-      items: newFacet
-        .slice(page! * perPage!, (page! + 1) * perPage!)
-        .map(([x, y]) => [x, y]),
-      pagination: {
-        page: 0,
-        perPage,
-        // TODO: this will change depending on zeroes
-        total: ff[facet].length,
-      },
+      ...paginate(newFacet, page, perPage, ([x, y]) => [x, y]),
       stats,
     } as FacetResult;
   }
 
   #getFullFacets() {
-    if (!this.#facetMemo) {
-      this.#facetMemo = Object.keys(this.#indexes).reduce((res, facet) => {
-        res[facet] = this.#indexes[facet]
+    if (!this.#fullFacets) {
+      this.#fullFacets = Object.keys(this.#indexes).reduce((res, field) => {
+        res[field] = this.#indexes[field]
           .values()
-          .sort(this.#sortForFacet(facet));
+          .sort(this.#sortForFacet(field));
         return res;
-      }, {} as Record<string, Array<FacetValue<SupportedColumnTypes>>>);
+      }, {} as Record<string, Array<FacetValue<SupportedFieldTypes>>>);
     }
-    return this.#facetMemo;
+    return this.#fullFacets;
   }
 
-  #sortForResult([field, order]: [string, SortDirection]) {
+  #sortForResults([field, order]: [string, SortDirection]) {
     return sort({
       order,
       field,
@@ -359,19 +361,29 @@ export class Table {
     });
   }
 
-  #sortConfigForFacet(facet: string): FacetSort {
+  #sortConfigForFacet(field: string): FacetSort {
     // @ts-expect-error fix later
-    return this.#options.schema[facet].facet?.sort || ["frequency", "desc"];
+    return this.#options.schema[field].facet?.sort || ["frequency", "desc"];
   }
 
-  #sortForFacet(facet: string) {
-    const config = this.#sortConfigForFacet(facet);
-    return sort({
+  #sortForFacet(field: string, selected?: SupportedFieldTypes[]) {
+    const config = this.#sortConfigForFacet(field);
+    const defaultSort = sort({
       field: config[0] === "frequency" ? 1 : 0,
       order: config[1],
       type:
-        config[0] === "frequency" ? "number" : this.#options.schema[facet].type,
+        config[0] === "frequency" ? "number" : this.#options.schema[field].type,
     });
+    if (selected && selected.length > 0) {
+      return (a: any, b: any) => {
+        const aa = selected.includes(a[0]);
+        const bb = selected.includes(b[0]);
+        if (aa && bb) return defaultSort(a, b);
+        if (!aa && !bb) return defaultSort(a, b);
+        return aa ? 1 : -1;
+      };
+    }
+    return defaultSort;
   }
 
   #buildIndex(items: any[]) {
@@ -389,10 +401,10 @@ export class Table {
     }
 
     this.#indexes = {};
-    Object.entries(this.#options.schema).forEach(([key, value]) => {
-      if (!value.facet) return;
+    Object.entries(this.#options.schema).forEach(([field, fieldConfig]) => {
+      if (!fieldConfig.facet) return;
       // @ts-expect-error fix later
-      this.#indexes[key] = new (value.facet?.indexer || IMapIndex)();
+      this.#indexes[field] = new (fieldConfig.facet?.indexer || IMapIndex)();
     });
 
     this.#universe = new SparseTypedFastBitSet();

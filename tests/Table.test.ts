@@ -160,7 +160,7 @@ describe("Table", () => {
       expect(result.facets.brand.items[5]).toEqual(["72-9301", 1]);
     });
 
-    it("returns facet values for string column", () => {
+    it("returns facet values for string field", () => {
       let result = t.search({
         facetFilter: { brand: ["Acer"] },
       });
@@ -169,7 +169,7 @@ describe("Table", () => {
       expect(result.facets.brand.items[5]).toEqual(["72-9301", 1]);
     });
 
-    it("returns facet values for array column", () => {
+    it("returns facet values for array field", () => {
       let result = t.search({
         facetFilter: { categories: ["Cameras & Camcorders"] },
       });
