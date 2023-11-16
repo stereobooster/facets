@@ -102,7 +102,7 @@ describe("Table", () => {
     const t = new Table({ schema }, items);
 
     it("filters by number facet", () => {
-      const result = t.search({ facetFilter: { price: 14.95 } });
+      const result = t.search({ facetFilter: { price: [14.95] } });
       expect(result.items[0].price).toEqual(14.95);
     });
 
@@ -114,12 +114,12 @@ describe("Table", () => {
         "360 & Panoramic Cameras",
       ];
       let result = t.search({
-        facetFilter: { categories: "Cameras & Camcorders" },
+        facetFilter: { categories: ["Cameras & Camcorders"] },
       });
       expect(result.items[0].categories).toEqual(categories);
 
       result = t.search({
-        facetFilter: { categories: "360 & Panoramic Cameras" },
+        facetFilter: { categories: ["360 & Panoramic Cameras"] },
       });
       expect(result.items[0].categories).toEqual(categories);
 
@@ -162,22 +162,39 @@ describe("Table", () => {
 
     it("returns facet values for string column", () => {
       let result = t.search({
-        facetFilter: { brand: "Acer" },
+        facetFilter: { brand: ["Acer"] },
       });
       expect(result.items.length).toEqual(20);
-      expect(result.facets.brand.items.filter(([, y]) => y > 0)).toEqual([["Acer", 23]]);
+      expect(result.facets.brand.items[0]).toEqual(["Acer", 23]);
+      expect(result.facets.brand.items[5]).toEqual(["72-9301", 1]);
     });
 
     it("returns facet values for array column", () => {
       let result = t.search({
-        facetFilter: { categories: "Cameras & Camcorders" },
+        facetFilter: { categories: ["Cameras & Camcorders"] },
       });
       expect(result.items.length).toEqual(1);
-      expect(result.facets.categories.items.filter(([, y]) => y > 0)).toEqual([
-        ["Cameras & Camcorders", 1],
-        ["Digital Cameras", 1],
-        ["Point & Shoot Cameras", 1],
-        ["360 & Panoramic Cameras", 1],
+      expect(result.facets.categories.items[0]).toEqual([
+        "Computers & Tablets",
+        23,
+      ]);
+    });
+
+    it("returns facet values for many filters", () => {
+      let result = t.search({
+        facetFilter: {
+          categories: ["Computers & Tablets"],
+          brand: ["Acer"],
+        },
+      });
+      expect(result.pagination.total).toEqual(23);
+      expect(result.facets.categories.items[0]).toEqual([
+        "Computers & Tablets",
+        23,
+      ]);
+      expect(result.facets.categories.items[10]).toEqual([
+        "LED Monitors",
+        1,
       ]);
     });
   });

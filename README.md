@@ -6,13 +6,14 @@
   - main package
     - MVP
       - [ ] facets
-        - I don't need text search pagination in order to build all facets intersection
-        - it takes `n!` intersections, but only if there is more than one facet or text search
-        - I need to intersect only selected value plus enough for the first page
-      - [ ] sort results by relevance
-      - [ ] filter by callback (for numeric ranges)
-      - [ ] function to fetch more facets data (pagination)
+        - we can iterate over first page only
+        - we can put selected values on top
+        - for numeric facet for slider:
+          - sort by value asc
+          - don't care about selected values
     - Post MVP
+      - filter by callback (for numeric ranges)
+        - this requires id in the object
       - typescript signature
       - mapPaginate - function to map item only enough to fill current page
       - search for facets
