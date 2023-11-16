@@ -6,9 +6,10 @@ import { NullsOrder, SortDirection, sort } from "./sort";
 import { Pagination, paginate } from "./utils";
 
 type SupportedFieldTypes = string | number | boolean | null;
+type SupportedFieldTypesTypes = "string" | "number" | "boolean";
 
 type FieldConfig = SortConfig & {
-  type: "string" | "number" | "boolean";
+  type: SupportedFieldTypesTypes;
   isArray?: boolean;
   facet?: boolean | FacetConfig;
   text?: boolean;
@@ -23,13 +24,19 @@ type TableConfig<S extends Schema> = {
   // idKey?: string; - needs more work
 };
 
+type FacetFilterType<T extends SupportedFieldTypesTypes> = T extends "string"
+  ? Array<string | null>
+  : T extends "number"
+  ? Array<number | null>
+  : T extends "boolean"
+  ? Array<boolean | null>
+  : never;
+
 type FacetFilter<S extends Schema> = {
-  [K in keyof S]?: S[K]["type"] extends "string"
-    ? Array<string | null>
-    : S[K]["type"] extends "number"
-    ? Array<number | null>
-    : S[K]["type"] extends "boolean"
-    ? Array<boolean | null>
+  [K in keyof S]?: S[K]["facet"] extends boolean
+    ? FacetFilterType<S[K]["type"]>
+    : S[K]["facet"] extends FacetConfig
+    ? FacetFilterType<S[K]["type"]>
     : never;
 };
 
@@ -54,15 +61,21 @@ type FacetResult<T = SupportedFieldTypes> = {
   stats: T extends number ? FacetStats : undefined;
 };
 
+type FacetResultType<T extends SupportedFieldTypesTypes> = T extends "string"
+  ? FacetResult<string>
+  : T extends "number"
+  ? FacetResult<number>
+  : T extends "boolean"
+  ? FacetResult<boolean>
+  : never;
+
 type FacetResults<S extends Schema> = {
-  [K in keyof S]: S[K]["type"] extends "string"
-    ? FacetResult<string>
-    : S[K]["type"] extends "number"
-    ? FacetResult<number>
-    : S[K]["type"] extends "boolean"
-    ? FacetResult<boolean>
+  [K in keyof S]: S[K]["facet"] extends boolean
+    ? FacetResultType<S[K]["type"]>
+    : S[K]["facet"] extends FacetConfig
+    ? FacetResultType<S[K]["type"]>
     : never;
-};;
+};
 
 type FacetFilterInternal = Record<
   string,
@@ -114,7 +127,7 @@ export type SearchOptions<S extends Schema> = {
   facetFilter?: FacetFilter<S>;
 };
 
-export type SearchResults<S extends Schema, I> = {
+export type SearchResults<S extends Schema, I extends Item<S>> = {
   items: I[];
   pagination: Pagination;
   facets: FacetResults<S>;
@@ -135,7 +148,7 @@ export class Table<S extends Schema, I extends Item<S>> {
     this.update(items);
   }
 
-  update(items: any[]) {
+  update(items: I[]) {
     this.#buildIndex(items);
   }
 
@@ -208,6 +221,8 @@ export class Table<S extends Schema, I extends Item<S>> {
 
     const facetFilterInternal = Object.entries(facetFilter).reduce(
       (result, [field, selected]) => {
+        if (!selected) return result;
+
         let ids: SparseTypedFastBitSet | undefined;
         selected.forEach((filterValue) => {
           if (!ids) {
@@ -411,8 +426,8 @@ export class Table<S extends Schema, I extends Item<S>> {
     // In order to use custom id field need to pass it to textIndexClass
     const idKey = "id"; //this.#options.idKey || "id";
     const searchableFields = Object.entries(this.#config.schema)
-      .filter(([, value]) => value.text)
-      .map(([key]) => key);
+      .filter(([, fieldConfig]) => fieldConfig.text)
+      .map(([field]) => field);
 
     const textIndexClass = this.#config.textIndex;
     if (textIndexClass) {
@@ -430,11 +445,11 @@ export class Table<S extends Schema, I extends Item<S>> {
       if (textIndexClass?.requiresId) item[idKey] = id;
       if (textIndexClass?.usesAddOne) this.#textIndex.addOne(id, item);
       Object.entries(this.#indexes).forEach(([key, index]) => {
-        const value = item[key];
-        if (Array.isArray(value)) {
-          value.forEach((v) => index.add(v, id));
+        const values = item[key];
+        if (Array.isArray(values)) {
+          values.forEach((value) => index.add(value, id));
         } else {
-          index.add(value, id);
+          index.add(values, id);
         }
       });
     });

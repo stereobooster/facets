@@ -13,7 +13,7 @@ const schema = {
   description: {
     type: "string" as const,
     text: true,
-  },
+  }
 };
 
 describe("Table text search", () => {
@@ -30,7 +30,5 @@ describe("Table text search", () => {
       });
       expect(result.items[0]).toEqual(items[1]);
     });
-
-
   });
 });
