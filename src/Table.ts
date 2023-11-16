@@ -12,7 +12,7 @@ type FacetFilter = Record<string, SupportedFieldTypes[]>;
 type FacetFilterInternal = Record<
   string,
   {
-    set: SparseTypedFastBitSet;
+    ids: SparseTypedFastBitSet;
     selected: SupportedFieldTypes[];
   }
 >;
@@ -95,7 +95,7 @@ export type SearchResults<I = unknown> = {
 
 export class Table {
   #items: any[];
-  #universe: SparseTypedFastBitSet;
+  // #universe: SparseTypedFastBitSet;
   #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
   #options: TableConfig;
   #textIndex: InstanceType<TextIndex>;
@@ -114,49 +114,49 @@ export class Table {
   }
 
   search(options?: SearchOptions): SearchResults<any> {
-    const { sortByText, rowsByText, facetFilterInternal, rowsByFacet } =
+    const { sortByText, idsByText, facetFilterInternal, idsByFacet } =
       this.#searchAll(options);
 
-    let rowIds: number[] | undefined;
-    if (rowsByFacet && rowsByText) {
-      const resultSet = rowsByText.new_intersection(rowsByFacet) as any;
+    let ids: number[] | undefined;
+    if (idsByFacet && idsByText) {
+      const resultSet = idsByText.new_intersection(idsByFacet) as any;
       if (options?.sort) {
-        rowIds = resultSet?.array();
+        ids = resultSet?.array();
       } else {
-        rowIds = sortByText!.filter((x) => resultSet?.has(x));
+        ids = sortByText!.filter((x) => resultSet?.has(x));
       }
-    } else if (rowsByFacet) {
-      rowIds = rowsByFacet.array();
-    } else if (rowsByText) {
-      rowIds = sortByText;
+    } else if (idsByFacet) {
+      ids = idsByFacet.array();
+    } else if (idsByText) {
+      ids = sortByText;
     }
 
-    let rows = rowIds?.map((id) => this.#items[id]);
+    let items = ids?.map((id) => this.#items[id]);
 
     if (options?.sort) {
-      if (!rows) {
+      if (!items) {
         // because sort works in place
-        rows = [...this.#items];
+        items = [...this.#items];
       }
-      rows = rows.sort(this.#sortForResults(options.sort));
+      items = items.sort(this.#sortForResults(options.sort));
     }
 
-    if (!rows) {
-      rows = this.#items;
+    if (!items) {
+      items = this.#items;
     }
 
     return {
-      ...paginate(rows, options?.page, options?.perPage),
-      facets: this.#getFacets(facetFilterInternal, rowsByText),
+      ...paginate(items, options?.page, options?.perPage),
+      facets: this.#getFacets(facetFilterInternal, idsByText),
     };
   }
 
   facet(filed: string, options?: SearchOptions): FacetResult {
-    const { rowsByText, facetFilterInternal } = this.#searchAll(options);
+    const { idsByText, facetFilterInternal } = this.#searchAll(options);
     return this.#getFacet(
       filed,
       facetFilterInternal,
-      rowsByText,
+      idsByText,
       options?.page,
       options?.perPage
     );
@@ -164,53 +164,53 @@ export class Table {
 
   #searchText(query: string | undefined) {
     let sortByText: Array<number> | undefined;
-    let rowsByText: SparseTypedFastBitSet | undefined = undefined;
+    let idsByText: SparseTypedFastBitSet | undefined = undefined;
     if (this.#textIndex && query) {
       sortByText = this.#textIndex.search(query, {
         perPage: this.#items.length,
       });
-      rowsByText = new SparseTypedFastBitSet(sortByText);
+      idsByText = new SparseTypedFastBitSet(sortByText);
     }
-    return { sortByText, rowsByText };
+    return { sortByText, idsByText };
   }
 
   #searchFacets(facetFilter: FacetFilter | undefined) {
     if (!facetFilter || Object.keys(facetFilter).length === 0)
-      return { facetFilterInternal: undefined, rowsByFacet: undefined };
+      return { facetFilterInternal: undefined, idsByFacet: undefined };
 
-    let rowsByFacet: SparseTypedFastBitSet | undefined;
+    let idsByFacet: SparseTypedFastBitSet | undefined;
 
     const facetFilterInternal = Object.entries(facetFilter).reduce(
-      (res, [field, selected]) => {
-        let set: SparseTypedFastBitSet | undefined;
+      (result, [field, selected]) => {
+        let ids: SparseTypedFastBitSet | undefined;
         selected.forEach((filterValue) => {
-          if (!set) {
-            set =
+          if (!ids) {
+            ids =
               selected.length === 1
                 ? this.#indexes[field].get(filterValue)
                 : this.#indexes[field].get(filterValue).clone();
             return;
           }
-          set.intersection(this.#indexes[field].get(filterValue));
+          ids.intersection(this.#indexes[field].get(filterValue));
         });
-        if (!set) return res;
+        if (!ids) return result;
 
-        if (!rowsByFacet) {
-          rowsByFacet = set.clone();
+        if (!idsByFacet) {
+          idsByFacet = ids.clone();
         } else {
-          rowsByFacet.intersection(set);
+          idsByFacet.intersection(ids);
         }
 
-        res[field] = {
-          set,
+        result[field] = {
+          ids,
           selected,
         };
-        return res;
+        return result;
       },
       {} as FacetFilterInternal
     );
 
-    return { facetFilterInternal, rowsByFacet };
+    return { facetFilterInternal, idsByFacet };
   }
 
   #searchAll(options?: SearchOptions) {
@@ -220,7 +220,7 @@ export class Table {
     };
   }
 
-  #getFacetSetExcept(
+  #getFacetFilterIdsExcept(
     field: string,
     facetFilter: FacetFilterInternal | undefined
   ) {
@@ -229,27 +229,27 @@ export class Table {
     delete facetFilter[field];
 
     const fields = Object.keys(facetFilter);
-    let result: SparseTypedFastBitSet | undefined;
+    let ids: SparseTypedFastBitSet | undefined;
     fields.forEach((field) => {
-      if (!result) {
-        result =
+      if (!ids) {
+        ids =
           fields.length === 1
-            ? facetFilter![field].set
-            : facetFilter![field].set.clone();
+            ? facetFilter![field].ids
+            : facetFilter![field].ids.clone();
         return;
       }
-      result.intersection(facetFilter![field].set);
+      ids.intersection(facetFilter![field].ids);
     });
-    return result;
+    return ids;
   }
 
   #getFacets(
     facetFilter: FacetFilterInternal | undefined,
     textSearch: SparseTypedFastBitSet | undefined
   ) {
-    return Object.keys(this.#indexes).reduce((res, field) => {
-      res[field] = this.#getFacet(field, facetFilter, textSearch);
-      return res;
+    return Object.keys(this.#indexes).reduce((result, field) => {
+      result[field] = this.#getFacet(field, facetFilter, textSearch);
+      return result;
     }, {} as Record<string, FacetResult>);
   }
 
@@ -273,7 +273,7 @@ export class Table {
 
     const selected = facetFilter ? facetFilter[field]?.selected : [];
 
-    const facetSearch = this.#getFacetSetExcept(field, facetFilter);
+    const facetSearch = this.#getFacetFilterIdsExcept(field, facetFilter);
     let resultSet: SparseTypedFastBitSet | undefined = undefined;
     if (facetSearch && textSearch) {
       resultSet = facetSearch.new_intersection(textSearch) as any;
@@ -329,11 +329,11 @@ export class Table {
 
   #getFullFacets() {
     if (!this.#fullFacets) {
-      this.#fullFacets = Object.keys(this.#indexes).reduce((res, field) => {
-        res[field] = this.#indexes[field]
+      this.#fullFacets = Object.keys(this.#indexes).reduce((result, field) => {
+        result[field] = this.#indexes[field]
           .values()
           .sort(this.#sortForFacet(field));
-        return res;
+        return result;
       }, {} as Record<string, Array<FacetValue<SupportedFieldTypes>>>);
     }
     return this.#fullFacets;
@@ -341,8 +341,8 @@ export class Table {
 
   #sortForResults([field, order]: [string, SortDirection]) {
     return sort({
-      order,
       field,
+      order,
       type: this.#options.schema[field].isArray
         ? undefined
         : this.#options.schema[field].type,
@@ -402,8 +402,8 @@ export class Table {
       this.#indexes[field] = new (fieldConfig.facet?.indexer || IMapIndex)();
     });
 
-    this.#universe = new SparseTypedFastBitSet();
-    if (items.length > 0) this.#universe.addRange(0, items.length - 1);
+    // this.#universe = new SparseTypedFastBitSet();
+    // if (items.length > 0) this.#universe.addRange(0, items.length - 1);
 
     items.forEach((item, id) => {
       if (textIndexClass?.requiresId) item[idKey] = id;
