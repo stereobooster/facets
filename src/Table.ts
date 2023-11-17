@@ -27,7 +27,7 @@ type TableConfig<S extends Schema> = {
 type FacetFilterType<T extends SupportedFieldTypesTypes> = T extends "string"
   ? Array<string | null>
   : T extends "number"
-  ? Array<number | null>
+  ? Array<number | null> | { from?: number; to?: number }
   : T extends "boolean"
   ? Array<boolean | null>
   : never;
@@ -224,16 +224,31 @@ export class Table<S extends Schema, I extends Item<S>> {
         if (!selected) return result;
 
         let ids: SparseTypedFastBitSet | undefined;
-        selected.forEach((filterValue) => {
-          if (!ids) {
-            ids =
-              selected.length === 1
-                ? this.#indexes[field].get(filterValue)
-                : this.#indexes[field].get(filterValue).clone();
-            return;
-          }
-          ids.intersection(this.#indexes[field].get(filterValue));
-        });
+        if (Array.isArray(selected)) {
+          selected.forEach((filterValue) => {
+            if (!ids) {
+              ids =
+                selected.length === 1
+                  ? this.#indexes[field].get(filterValue)
+                  : this.#indexes[field].get(filterValue).clone();
+              return;
+            }
+            ids.union(this.#indexes[field].get(filterValue));
+          });
+        } else {
+          // probably not the smartest way to do this
+          const from: number = selected.from || -Infinity;
+          const to: number  = selected.to || Infinity;
+          this.#indexes[field].values().forEach(([x,y,z]) => {
+            // @ts-expect-error
+            if (x == null || x > to || x < from) return
+            if (!ids) {
+              ids = z.clone();
+              return;
+            }
+            ids.union(z);
+          })
+        }
         if (!ids) return result;
 
         if (!idsByFacet) {

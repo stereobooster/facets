@@ -5,8 +5,7 @@
 - workspace
   - main package
     - MVP
-      - filter by facet by numeric range
-        - would allow better memoization
+      - more tests
       - microbundle
       - errors and warnings
     - Post MVP
