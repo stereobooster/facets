@@ -1,7 +1,7 @@
 {
-  "name": "@stereobooster/facets",
+  "name": "@stereobooster/facets-instantsearch",
   "version": "0.1.0",
-  "description": "",
+  "description": "InstantSearch.js adapter for facets",
   "keywords": [],
   "author": "stereobooster",
   "license": "MIT",
@@ -26,15 +26,10 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
-    "@orama/orama": "2.0.0-beta.4",
-    "flexsearch": "^0.7.31",
-    "fuse.js": "^7.0.0",
-    "minisearch": "^6.2.0",
-    "mnemonist": "^0.39.5",
-    "quick-score": "^0.2.0",
-    "typedfastbitset": "^0.4.2"
+    "@stereobooster/facets": "workspace:*"
   },
   "devDependencies": {
+    "@algolia/client-search": "^4.20.0",
     "microbundle": "^0.15.1",
     "vitest": "^0.34.6"
   }

@@ -6,8 +6,7 @@
 
 ## TODO
 
-- microbundle
-- add tests (vitest)
+- add tests
 - demo project
 - implement numeric facets filter `adaptNumericFilters`
 - `adaptHit` requires id

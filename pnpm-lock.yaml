@@ -46,6 +46,9 @@ importers:
       '@algolia/client-search':
         specifier: ^4.20.0
         version: 4.20.0
+      microbundle:
+        specifier: ^0.15.1
+        version: 0.15.1
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
