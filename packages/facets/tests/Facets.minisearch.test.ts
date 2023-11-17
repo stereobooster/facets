@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import { readFileSync } from "node:fs";
-import { Table } from "../src/Table";
+import { Facets } from "../src/Facets";
 import { TMinisearchIndex } from "../src/TMinisearchIndex";
 // @ts-expect-error need node types
 const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40);
@@ -16,9 +16,9 @@ const schema = {
   }
 };
 
-describe("Table text search", () => {
+describe("Facets text search", () => {
   describe("without text and facets", () => {
-    const t = new Table({ schema, textIndex: TMinisearchIndex }, items);
+    const t = new Facets({ schema, textIndex: TMinisearchIndex }, items);
 
     it("returns results", () => {
       const result = t.search({ query: "Panoramic" });

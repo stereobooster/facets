@@ -15,9 +15,9 @@ type FieldConfig = SortConfig & {
   text?: boolean;
 };
 
-type Schema = Record<string, FieldConfig>;
+export type Schema = Record<string, FieldConfig>;
 
-type TableConfig<S extends Schema> = {
+export type FacetsConfig<S extends Schema> = {
   schema: S;
   textIndex?: TextIndex;
   sortConfig?: SortConfig;
@@ -40,7 +40,7 @@ type FacetFilter<S extends Schema> = {
     : never;
 };
 
-type Item<S extends Schema> = {
+export type Item<S extends Schema> = {
   [K in keyof S]?: S[K]["type"] extends "string"
     ? string | null | Array<string | null>
     : S[K]["type"] extends "number"
@@ -69,7 +69,7 @@ type FacetResultType<T extends SupportedFieldTypesTypes> = T extends "string"
   ? FacetResult<boolean>
   : never;
 
-type FacetResults<S extends Schema> = {
+export type FacetResults<S extends Schema> = {
   [K in keyof S]: S[K]["facet"] extends boolean
     ? FacetResultType<S[K]["type"]>
     : S[K]["facet"] extends FacetConfig
@@ -133,17 +133,17 @@ export type SearchResults<S extends Schema, I extends Item<S>> = {
   facets: FacetResults<S>;
 };
 
-export class Table<S extends Schema, I extends Item<S>> {
+export class Facets<S extends Schema, I extends Item<S>> {
   #items: I[];
   #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
-  #config: TableConfig<S>;
+  #config: FacetsConfig<S>;
   #textIndex: InstanceType<TextIndex>;
   #fullFacets: Record<
     string,
     Array<[SupportedFieldTypes, number, SparseTypedFastBitSet]>
   >;
 
-  constructor(config: TableConfig<S>, items: I[] = []) {
+  constructor(config: FacetsConfig<S>, items: I[] = []) {
     this.#config = config;
     this.update(items);
   }
@@ -238,16 +238,17 @@ export class Table<S extends Schema, I extends Item<S>> {
         } else {
           // probably not the smartest way to do this
           const from: number = selected.from || -Infinity;
-          const to: number  = selected.to || Infinity;
-          this.#indexes[field].values().forEach(([x,y,z]) => {
-            // @ts-expect-error
-            if (x == null || x > to || x < from) return
-            if (!ids) {
-              ids = z.clone();
-              return;
-            }
-            ids.union(z);
-          })
+          const to: number = selected.to || Infinity;
+          (this.#indexes[field] as InvertedIndex<number>)
+            .values()
+            .forEach(([x, y, z]) => {
+              if (x == null || x > to || x < from) return;
+              if (!ids) {
+                ids = z.clone();
+                return;
+              }
+              ids.union(z);
+            });
         }
         if (!ids) return result;
 

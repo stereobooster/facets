@@ -14,6 +14,7 @@
     "@stereobooster/facets": "workspace:*"
   },
   "devDependencies": {
+    "@algolia/client-search": "^4.20.0",
     "vitest": "^0.34.6"
   }
 }

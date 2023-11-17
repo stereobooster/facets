@@ -2,10 +2,25 @@
   "name": "@stereobooster/facets",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
+  "source": "src/index.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.module.js",
+  "unpkg": "./dist/index.umd.js",
+  "files": [
+    "./dist/*"
+  ],
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "prepublishOnly": "npm run build",
+    "build": "rm -rf dist && microbundle",
+    "dev": "microbundle watch"
   },
   "keywords": [],
   "author": "stereobooster",
@@ -20,6 +35,7 @@
     "typedfastbitset": "^0.4.2"
   },
   "devDependencies": {
+    "microbundle": "^0.15.1",
     "vitest": "^0.34.6"
   }
 }

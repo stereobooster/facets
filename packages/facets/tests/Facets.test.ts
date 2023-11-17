@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import { readFileSync } from "node:fs";
-import { Table } from "../src/Table";
+import { Facets } from "../src/Facets";
 // @ts-expect-error need node types
 const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40) as any[];
 const schema = {
@@ -29,9 +29,9 @@ const schema = {
   //   },
 };
 
-describe("Table", () => {
+describe("Facets", () => {
   describe("without text and facets", () => {
-    const t = new Table({ schema }, items);
+    const t = new Facets({ schema }, items);
 
     it("returns results", () => {
       const result = t.search();
@@ -99,7 +99,7 @@ describe("Table", () => {
   });
 
   describe("with facets", () => {
-    const t = new Table({ schema }, items);
+    const t = new Facets({ schema }, items);
 
     it("filters by number facet", () => {
       const result = t.search({ facetFilter: { price: [14.95] } });

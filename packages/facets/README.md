@@ -3,7 +3,6 @@
 > Facet - any of the definable aspects that make up a subject (as of contemplation) or an object (as of consideration)
 
 - MVP
-  - microbundle
   - more tests
   - errors and warnings
 - Post MVP

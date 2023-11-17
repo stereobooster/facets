@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { Table } from "../src/Table";
+import { Facets } from "../src/Facets";
 const items = [
   { brand: "ba", category: null, price: 2 },
   { brand: "ba", category: ["ca"], price: 10 },
@@ -25,8 +25,8 @@ const schema = {
   },
 };
 
-describe("Table facets", () => {
-  const t = new Table({ schema }, items);
+describe("Facets facets", () => {
+  const t = new Facets({ schema }, items);
 
   it("results without filter", () => {
     const result = t.search({});
