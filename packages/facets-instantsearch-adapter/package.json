@@ -1,0 +1,19 @@
+{
+  "name": "facets-instantsearch-adapter",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "stereobooster",
+  "license": "MIT",
+  "dependencies": {
+    "@stereobooster/facets": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.6"
+  }
+}

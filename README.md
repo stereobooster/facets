@@ -2,43 +2,20 @@
 
 ## TODO
 
-- workspace
-  - main package
-    - MVP
-      - more tests
-      - microbundle
-      - errors and warnings
-    - Post MVP
-      - event dispatcher to allow async loading, async indexing
-        - https://github.com/developit/mitt
-      - facets optimization
-        - single value columns filter
-        - we can iterate over first page only
-        - we can put selected values on top
-        - for numeric facet for slider:
-          - sort by value asc
-          - don't care about selected values
-      - memoization for consequent operations
-        - search narrowing
-        - pagination
-        - sorting
-      - highilght search results
-      - search for facets
-      - built-in prefix search based on TrieMap
-        - through facet filter
-      - sort by more than one column
-      - web worker
-      - date time columns
-      - more than one level objects
-    - Other
-      - [BFloat16 wasm](https://github.com/tc39/proposal-float16array/issues/7)
-      - RoaringWasm and other TrieMaps
-      - hierarchical filter with TrieMap and custom separator (`/` instead of `>`)
-        - But it needs a way to get root level keys
-      - preindexed data
-  - InstantSearch adpater
-    - https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/src/adapter.ts
-    - https://github.com/typesense/typesense-instantsearch-adapter/blob/master/src/TypesenseInstantsearchAdapter.js
+**Name?**
+  - https://www.npmjs.com/package/facets taken by 10 year old package
+  - https://www.npmjs.com/package/hypercube squated
+  - https://www.npmjs.com/package/teseract taken
+  - https://www.npmjs.com/package/trillion taken
+  - prisma, rainbow, cuts - taken
+  - https://www.npmjs.com/package/aspects taken
+  - shape sorter game
+  - sieve
+  - just use `@stereobooster` prefix?
+
+**Workspace**:
+  - [main package](/packages/facets/README.md)
+  - [InstantSearch adpater](/packages/facets-instantsearch-adapter/README.md)
   - demo with table / cards
   - query string parser
   - demo with graph?
