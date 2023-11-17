@@ -1,0 +1,20 @@
+{
+  "name": "facets-instantsearch-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@stereobooster/facets-instantsearch": "workspace:*",
+    "algoliasearch": "4.14.3",
+    "instantsearch.js": "4.60.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
+}

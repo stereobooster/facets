@@ -1,7 +1,8 @@
 # facets-instantsearch-adapter demo
 
-something similar to:
+Copy paste of https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce with slight changes
 
-- https://stereobooster.com/posts/faceted-search/
-- https://github.com/unplatform-io/clientside-instantsearch-demo, but I don't need React
-- https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce
+## TODO
+
+- replace `algoliasearch/lite` with `facets`
+- copy data file https://github.com/algolia/datasets/tree/master/ecommerce
