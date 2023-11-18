@@ -7,18 +7,18 @@
   - errors and warnings
 - Post MVP
   - event dispatcher to allow async loading, async indexing
-  - https://github.com/developit/mitt
+    - https://github.com/developit/mitt
   - facets optimization
-  - single value columns filter
-  - we can iterate over first page only
-  - we can put selected values on top
-  - for numeric facet for slider:
-    - sort by value asc
-    - don't care about selected values
+    - single value columns filter
+    - we can iterate over first page only
+    - we can put selected values on top
+    - for numeric facet for slider:
+      - sort by value asc
+      - don't care about selected values
   - memoization for consequent operations
-  - search narrowing
-  - pagination
-  - sorting
+    - search narrowing
+    - pagination
+    - sorting
   - highilght search results
   - search for facets
   - built-in prefix search based on TrieMap

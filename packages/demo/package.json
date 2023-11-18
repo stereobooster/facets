@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stereobooster/facets": "workspace:*",
     "@stereobooster/facets-instantsearch": "workspace:*",
     "instantsearch.js": "4.60.0"
   },

@@ -20,6 +20,8 @@ import {
   sortBy,
 } from "./widgets";
 
+import { TFuseIndex } from "@stereobooster/facets";
+
 import {
   createIndex,
   getSearchClient,
@@ -28,6 +30,7 @@ import {
 const data = await fetch("/records.json").then((x) => x.json());
 const index = createIndex(
   {
+    textIndex: TFuseIndex,
     schema: {
       name: {
         type: "string",

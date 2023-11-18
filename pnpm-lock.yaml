@@ -8,6 +8,9 @@ importers:
 
   packages/demo:
     dependencies:
+      '@stereobooster/facets':
+        specifier: workspace:*
+        version: link:../facets
       '@stereobooster/facets-instantsearch':
         specifier: workspace:*
         version: link:../facets-instantsearch

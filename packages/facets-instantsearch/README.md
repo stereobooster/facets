@@ -9,7 +9,6 @@ InstantSearch.js adapter for facets
 ## TODO
 
 - add tests
-- demo project
 - implement numeric facets filter `adaptNumericFilters`
 - `adaptHit` requires id
 - `parseRange` and `filterRegex` can be implemented with propper parser
@@ -20,3 +19,4 @@ InstantSearch.js adapter for facets
 - `adaptFacets` maybe make an option to return it as Object instead of array in the Facets library itself
 - `searchForFacetValues` maybe implement
 - update readme https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/README.md
+- add `@stereobooster/facets` as peerDependency
