@@ -1,4 +1,6 @@
-# facets-instantsearch-adapter
+# facets-instantsearch
+
+InstantSearch.js adapter for facets
 
 - https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/src/adapter.ts
 - https://github.com/typesense/typesense-instantsearch-adapter/blob/master/src/SearchRequestAdapter.js

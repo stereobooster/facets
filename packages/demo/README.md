@@ -1,8 +1,15 @@
-# facets-instantsearch-adapter demo
+# facets-instantsearch demo
 
-Copy paste of https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce with slight changes
+Copy paste of https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce with slight changes.
+
+Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- replace `algoliasearch/lite` with `facets`
-- copy data file https://github.com/algolia/datasets/tree/master/ecommerce
+- [ ] implement text search
+- [ ] fix "brands" filter
+- [ ] fix "price" filter
+- [ ] fix "free shiping" filter
+- [ ] implement sorting
+- [ ] implement search for brands filter
+- [ ] fix "category" filter

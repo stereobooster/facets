@@ -39,12 +39,11 @@ export function adaptFacets(
 ): Record<string, Record<string, number>> {
   const facetNames = Object.keys(itemsJsFacets);
 
-  const instantsearchFacets = {};
+  const instantsearchFacets = Object.create(null);
   facetNames.forEach((name) => {
-    instantsearchFacets[name] = {};
-
-    itemsJsFacets[name].buckets.forEach(({ key, doc_count }) => {
-      instantsearchFacets[name][key] = doc_count;
+    instantsearchFacets[name] = Object.create(null);
+    itemsJsFacets[name].items.forEach(([value, frequency]) => {
+      instantsearchFacets[name][value] = frequency;
     });
   });
 
@@ -55,11 +54,10 @@ export function adaptFacetsStats(
   itemsJsFacetsStats: object
 ): Record<string, { min: number; max: number; avg: number; sum: number }> {
   const facetNames = Object.keys(itemsJsFacetsStats);
-  const instantsearchFacetsStats = {};
-
+  const instantsearchFacetsStats = Object.create(null);
   facetNames.forEach((name) => {
-    if (itemsJsFacetsStats[name].facet_stats) {
-      instantsearchFacetsStats[name] = itemsJsFacetsStats[name].facet_stats;
+    if (itemsJsFacetsStats[name].stats) {
+      instantsearchFacetsStats[name] = itemsJsFacetsStats[name].stats;
     }
   });
 

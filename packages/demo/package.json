@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@stereobooster/facets-instantsearch": "workspace:*",
-    "algoliasearch": "4.14.3",
     "instantsearch.js": "4.60.0"
   },
   "devDependencies": {

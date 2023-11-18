@@ -1,4 +1,4 @@
-# Inverted index experiment
+# Facets monorepo
 
 ## TODO
 
@@ -21,8 +21,8 @@
 
 **Workspace**:
   - [main package](/packages/facets/README.md)
-  - [InstantSearch adpater](/packages/facets-instantsearch-adapter/README.md)
-  - [demo with table / cards](/packages/demo/README.md)
+  - [InstantSearch adpater](/packages/facets-instantsearch/README.md)
+  - [demo](/packages/demo/README.md)
   - query string parser
   - demo with graph?
   - alternative solutions

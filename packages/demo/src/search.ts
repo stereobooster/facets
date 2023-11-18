@@ -1,4 +1,3 @@
-import algoliasearch from "algoliasearch/lite";
 import instantsearch from "instantsearch.js";
 
 import getRouting from "./routing";
@@ -21,16 +20,76 @@ import {
   sortBy,
 } from "./widgets";
 
-const searchClient = algoliasearch(
-  "latency",
-  "6be0576ff61c053d5f9a3225e2a90f76",
+import {
+  createIndex,
+  getSearchClient,
+} from "@stereobooster/facets-instantsearch";
+
+const data = await fetch("/records.json").then((x) => x.json());
+const index = createIndex(
+  {
+    schema: {
+      name: {
+        type: "string",
+        text: true,
+      },
+      description: {
+        type: "string",
+        text: true,
+      },
+      brand: {
+        type: "string",
+        facet: true,
+      },
+      categories: {
+        type: "string",
+        isArray: true,
+        facet: true,
+      },
+      // "hierarchicalCategories":
+      type: {
+        type: "string",
+      },
+      price: {
+        type: "number",
+        facet: true,
+      },
+      price_range: {
+        type: "string",
+      },
+      image: {
+        type: "string",
+      },
+      url: {
+        type: "string",
+      },
+      free_shipping: {
+        type: "boolean",
+        facet: true,
+      },
+      popularity: {
+        type: "number",
+      },
+      rating: {
+        type: "number",
+        facet: true,
+      },
+      objectID: {
+        type: "string",
+      },
+    },
+  },
+  data
 );
 
+const searchClient = getSearchClient(index);
+
 const search = instantsearch({
+  // @ts-expect-error fix later
   searchClient,
   indexName: "instant_search",
   routing: getRouting({ indexName: "instant_search" }),
-  insights: true,
+  insights: false,
 });
 
 search.addWidgets([

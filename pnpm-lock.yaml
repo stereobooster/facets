@@ -11,9 +11,6 @@ importers:
       '@stereobooster/facets-instantsearch':
         specifier: workspace:*
         version: link:../facets-instantsearch
-      algoliasearch:
-        specifier: 4.14.3
-        version: 4.14.3
       instantsearch.js:
         specifier: 4.60.0
         version: 4.60.0(algoliasearch@4.14.3)
