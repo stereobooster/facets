@@ -29,7 +29,7 @@
   - more than one level objects
 - Other
   - [BFloat16 wasm](https://github.com/tc39/proposal-float16array/issues/7)
-  - RoaringWasm and other TrieMaps
+  - RoaringWasm, TrieMap
   - hierarchical filter with TrieMap and custom separator (`/` instead of `>`)
   - But it needs a way to get root level keys
   - preindexed data

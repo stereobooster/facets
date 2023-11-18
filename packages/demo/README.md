@@ -9,9 +9,9 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 - [ ] fix "brands" filter
 - [ ] fix "price" filter
 - [ ] fix "free shiping" filter
-- [ ] implement sorting
 - [ ] implement search for brands filter
 - [ ] fix "category" filter
+  - support multi-level objects with "paths" e.g. `hierarchicalCategories.lvl0`
 - [ ] fix `helpers.highlight` in `Products.ts`
 - [ ] fix `helpers.snippet` in `Products.ts`
 - [ ] move index to worker?

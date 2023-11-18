@@ -8,12 +8,24 @@ export function adaptRequest<S extends Schema>(
     query: request.params?.query,
     page: request.params?.page,
     perPage: request.params?.hitsPerPage,
+    sort: adaptSort(request.indexName),
     // indexName: request.indexName,
-    // sort ?
   };
 
-  const numericFilters = request.params?.numericFilters;
-  const facetFilters = request.params?.facetFilters;
+  // request.indexName = "instant_search_price_desc"
+  // request.params.maxValuesPerFacet = 10
+  // request.params.attributesToSnippet = ["description:10"]
+  // request.params.facetFilters = ["brand:Insignia™"]
+  // request.params.numericFilters = ["price>=1741"]
+
+  // Facet request:
+  // facets: "price"
+  // hitsPerPage: 0
+  // ​maxValuesPerFacet: 10
+  // ​page: 0
+
+  // const facetFilters = request.params?.facetFilters;
+  // const numericFilters = request.params?.numericFilters;
   // const sort = request.indexName; // IndexName will be assigned the SortBy value if selected.
 
   // if (numericFilters && numericFilters.length > 0) {
@@ -26,6 +38,15 @@ export function adaptRequest<S extends Schema>(
   // }
 
   return response;
+}
+
+export function adaptSort(indexName: string) {
+  const parts = indexName.split("_");
+  if (parts.length < 3) return;
+  const field = parts[parts.length - 2];
+  const order = parts[parts.length - 1];
+  if (order !== "asc" && order !== "desc") return;
+  return [field, order] as [string, "asc" | "desc"];
 }
 
 export function adaptFilters(instantsearchFacets) {
