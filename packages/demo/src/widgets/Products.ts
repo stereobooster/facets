@@ -13,9 +13,15 @@ export const products = hits({
 
         <div class="hit-info-container">
           <p class="hit-category">${hit.categories[0]}</p>
-          <h1>${components.Highlight({ hit, attribute: "name" })}</h1>
+          <h1>
+            ${hit._highlightResult?.name
+              ? components.Highlight({ hit, attribute: "name" })
+              : hit.name}
+          </h1>
           <p class="hit-description">
-            ${components.Highlight({ hit, attribute: "description" })}
+            ${hit._highlightResult?.description
+              ? components.Highlight({ hit, attribute: "description" })
+              : hit.description}
           </p>
 
           <footer>
