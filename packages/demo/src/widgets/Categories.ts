@@ -4,7 +4,7 @@ import { collapseButtonText } from "../templates/panel";
 
 const categoryHierarchicalMenu = panel({
   templates: {
-    header: "Category",
+    header: (_, { html }) => html`Category`,
     collapseButtonText,
   },
   collapsed: () => false,

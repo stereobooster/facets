@@ -4,7 +4,7 @@ import { collapseButtonText } from "../templates/panel";
 
 const freeShippingToggleRefinement = panel({
   templates: {
-    header: "Free shipping",
+    header: (_, { html }) => html`Free shipping`,
     collapseButtonText,
   },
   collapsed: () => false,
@@ -14,6 +14,7 @@ export const freeShipping = freeShippingToggleRefinement({
   container: '[data-widget="free-shipping"]',
   attribute: "free_shipping",
   templates: {
-    labelText: "Display only items with free shipping",
+    // @ts-expect-error fix later
+    labelText: (_, { html }) => html`Display only items with free shipping`,
   },
 });

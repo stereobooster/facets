@@ -6,13 +6,16 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- [ ] remove custom fonts
-- [ ] use css from npm
 - [ ] move index to worker?
-- [ ] fix `helpers.snippet` in `Products.ts`
+
+### Snippeting doesn't work
+
+See: `helpers.snippet` in `Products.ts`.
+
+It should cut first N words. It requires primitive tokenizer, plus it should try to show text with matched parts.
 
 ```js
-request.params.attributesToSnippet = ["description:10"]
+request.params.attributesToSnippet = ["description:10"];
 ```
 
 ```json

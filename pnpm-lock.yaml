@@ -14,6 +14,9 @@ importers:
       '@stereobooster/facets-instantsearch':
         specifier: workspace:*
         version: link:../facets-instantsearch
+      instantsearch.css:
+        specifier: ^8.1.0
+        version: 8.1.0
       instantsearch.js:
         specifier: 4.60.0
         version: 4.60.0(algoliasearch@4.20.0)
@@ -3015,6 +3018,10 @@ packages:
   /inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: true
+
+  /instantsearch.css@8.1.0:
+    resolution: {integrity: sha512-rPhcAZ02bLwUn3iOXbldZW/yl+17guWoH3qWYZ8nQEwNBx5+wZ6Bv8mFqqK448+R2aU4nbFKIhmoTIPXI5Zobg==}
+    dev: false
 
   /instantsearch.js@4.60.0(algoliasearch@4.20.0):
     resolution: {integrity: sha512-u/xeCT1DaxPioJnSm3hV4lNAojlhbjGrpX5fHO6+RJjpDFv/MgYxiIOdaIRowmt5F0v/3QCm+Un5f4jy1/+emA==}

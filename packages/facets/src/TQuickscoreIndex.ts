@@ -55,12 +55,12 @@ export class TQuickscoreIndex extends TextIndexBase {
         if (start < str.length - 1)
           parts.push(str.slice(start, str.length - 1));
 
-        // TODO: for now using InstantSearch, Algolia convention
+        // TODO: for now using InstantSearch/Algolia convention
         res[key] = {
           value: parts.join(""),
-          matchLevel: "full",
-          fullyHighlighted: false,
-          matchedWords: [],
+          // matchLevel: "full",
+          // fullyHighlighted: false,
+          // matchedWords: [],
         };
         return res;
       }, Object.create(null));
