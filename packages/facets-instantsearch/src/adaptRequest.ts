@@ -9,32 +9,21 @@ export function adaptRequest<S extends Schema>(
     page: request.params?.page,
     perPage: request.params?.hitsPerPage,
     sort: adaptSort(request.indexName),
-    // indexName: request.indexName,
+    facetFilter: adaptFacetFilters(request.params?.facetFilters) as any,
   };
 
-  // request.indexName = "instant_search_price_desc"
-  // request.params.maxValuesPerFacet = 10
-  // request.params.attributesToSnippet = ["description:10"]
-  // request.params.facetFilters = ["brand:Insignia™"]
   // request.params.numericFilters = ["price>=1741"]
+  // request.params.attributesToSnippet = ["description:10"]
 
   // Facet request:
   // facets: "price"
   // hitsPerPage: 0
   // ​maxValuesPerFacet: 10
-  // ​page: 0
 
-  // const facetFilters = request.params?.facetFilters;
   // const numericFilters = request.params?.numericFilters;
-  // const sort = request.indexName; // IndexName will be assigned the SortBy value if selected.
-
   // if (numericFilters && numericFilters.length > 0) {
   //   const filters = adaptNumericFilters(numericFilters);
   //   response.filter = (item) => filters.every((filter) => filter(item));
-  // }
-
-  // if (facetFilters && facetFilters.length > 0) {
-  //   response.filters = adaptFilters(facetFilters);
   // }
 
   return response;
@@ -49,34 +38,40 @@ export function adaptSort(indexName: string) {
   return [field, order] as [string, "asc" | "desc"];
 }
 
-export function adaptFilters(instantsearchFacets) {
-  let itemsJsFacets = {};
-  if (Array.isArray(instantsearchFacets)) {
-    instantsearchFacets.forEach((facets) => {
-      if (Array.isArray(facets)) {
-        facets.forEach((facet) => {
-          itemsJsFacets = filterRegex(itemsJsFacets, facet);
-        });
-      } else {
-        itemsJsFacets = filterRegex(itemsJsFacets, facets);
-      }
-    });
-  } else {
-    throw Error("request.params.facetFilters does not contain an array");
+export function adaptFacetFilters(
+  facetFilters:
+    | string
+    | readonly string[]
+    | readonly (string | readonly string[])[]
+    | undefined
+) {
+  if (!facetFilters) return;
+  const filter: Record<string, string[]> = Object.create(null);
+
+  if (typeof facetFilters === "string") {
+    filterRegex(facetFilters, filter);
+    return filter;
   }
 
-  return itemsJsFacets;
+  facetFilters.forEach((facets) => {
+    if (Array.isArray(facets)) {
+      facets.forEach((facet) => filterRegex(facet, filter));
+    } else {
+      filterRegex(facets as string, filter);
+    }
+  });
+
+  return filter;
 }
 
-export function filterRegex(itemsJsFacets, facet) {
+export function filterRegex(facet: string, filter: Record<string, string[]>) {
   const facetRegex = new RegExp(/(.+)(:)(.+)/);
-  const [, name, , value] = facet.match(facetRegex);
-  if (itemsJsFacets[name]) {
-    itemsJsFacets[name].push(value);
+  const [, name, , value] = facet.match(facetRegex) || [];
+  if (filter[name]) {
+    filter[name].push(value);
   } else {
-    itemsJsFacets[name] = [value];
+    filter[name] = [value];
   }
-  return itemsJsFacets;
 }
 
 export function parseRange(range) {

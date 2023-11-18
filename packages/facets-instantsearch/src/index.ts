@@ -8,11 +8,11 @@ import { adaptResponse } from "./adaptResponse";
 import { adaptRequest } from "./adaptRequest";
 
 export function getSearchClient<S extends Schema, I extends Item<S>>(
-  newIndex: Facets<S, I>
+  index: Facets<S, I>
 ) {
   return {
     search: (queries: MultipleQueriesQuery[]) =>
-      performSearch(queries, newIndex),
+      performSearch(queries, index),
     searchForFacetValues: () => {
       throw new Error("Not implemented");
     },
