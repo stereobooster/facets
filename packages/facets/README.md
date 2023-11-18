@@ -4,9 +4,10 @@
 
 ## TODO
 
-- more than one level objects
-- search for facets
 - highilght search results
+- facet request
+  - `facets: "price", hitsPerPage: 0, ​maxValuesPerFacet: 10`
+- search for facets
 - numeric filter
   - support `>` (not just `>=`), `<` (not just `<=`),
   - support multiple ranges e.g `[{ from, to }, { eq }, { neq }]`

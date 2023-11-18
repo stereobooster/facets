@@ -12,6 +12,8 @@ export function adaptRequest<S extends Schema>(
   // hitsPerPage: 0
   // ​maxValuesPerFacet: 10
 
+  console.log(request.params)
+  
   return {
     query: request.params?.query,
     page: request.params?.page,

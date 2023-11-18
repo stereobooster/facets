@@ -47,7 +47,26 @@ const schema = {
     isArray: true,
     facet: true,
   },
-  // "hierarchicalCategories":
+  "hierarchicalCategories.lvl0": {
+    type: "string",
+    facet: true,
+    isObject: true,
+  },
+  "hierarchicalCategories.lvl1": {
+    type: "string",
+    facet: true,
+    isObject: true,
+  },
+  // "hierarchicalCategories.lvl2": {
+  //   type: "string",
+  //   facet: true,
+  //   isObject: true,
+  // },
+  // "hierarchicalCategories.lvl3": {
+  //   type: "string",
+  //   facet: true,
+  //   isObject: true,
+  // },
   type: {
     type: "string",
   },

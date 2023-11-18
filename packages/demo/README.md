@@ -6,8 +6,7 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- [ ] fix "category" filter
-  - support multi-level objects with "paths" e.g. `hierarchicalCategories.lvl0`
+- [ ] try anothe text search enging
+- [ ] move index to worker?
 - [ ] fix `helpers.highlight` in `Products.ts`
 - [ ] fix `helpers.snippet` in `Products.ts`
-- [ ] move index to worker?

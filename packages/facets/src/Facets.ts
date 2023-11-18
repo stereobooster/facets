@@ -10,8 +10,24 @@ type SupportedFieldTypesTypes = "string" | "number" | "boolean";
 
 type FieldConfig = SortConfig & {
   type: SupportedFieldTypesTypes;
+  /**
+   * **Not sure about this one**.
+   * For now affects only sorting. If it is array it would be converted to string before sorting
+   */
   isArray?: boolean;
+  /**
+   * **Not sure about this one**.
+   * if field name should be treated as path e.g.
+   * `some.thing` would expect shape like this `[{ some: { thing: ... } }]`
+   */
+  isObject?: boolean;
+  /**
+   * if field used for faceting
+   */
   facet?: boolean | FacetConfig;
+  /**
+   * if field used for text search
+   */
   text?: boolean;
 };
 
@@ -450,8 +466,18 @@ export class Facets<S extends Schema, I extends Item<S>> {
       this.#textIndex = new textIndexClass({ fields: searchableFields });
     }
 
+    const accessors = Object.create(null);
     this.#indexes = {};
     Object.entries(this.#config.schema).forEach(([field, fieldConfig]) => {
+      if (fieldConfig.isObject) {
+        accessors[field] = new Function(
+          "a",
+          `try { return a${field
+            .split(".")
+            .map((x) => `["${x}"]`)
+            .join("")} } catch (e) {}`
+        );
+      }
       if (!fieldConfig.facet) return;
       // @ts-expect-error fix later
       this.#indexes[field] = new (fieldConfig.facet?.indexer || IMapIndex)();
@@ -460,8 +486,9 @@ export class Facets<S extends Schema, I extends Item<S>> {
     items.forEach((item, id) => {
       if (textIndexClass?.requiresId) item[idKey] = id;
       if (textIndexClass?.usesAddOne) this.#textIndex.addOne(id, item);
-      Object.entries(this.#indexes).forEach(([key, index]) => {
-        const values = item[key];
+      Object.entries(this.#indexes).forEach(([field, index]) => {
+        const values = accessors[field] ? accessors[field](item) : item[field];
+        if (accessors[field] && values == null) return;
         if (Array.isArray(values)) {
           values.forEach((value) => index.add(value, id));
         } else {
