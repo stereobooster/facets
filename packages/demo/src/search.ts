@@ -84,7 +84,6 @@ const index = createIndex({ textIndex: TFuseIndex, schema }, data);
 const searchClient = getSearchClient(index, schema);
 
 const search = instantsearch({
-  // @ts-expect-error fix later
   searchClient,
   indexName: "instant_search",
   routing: getRouting({ indexName: "instant_search" }),

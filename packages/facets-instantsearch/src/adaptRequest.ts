@@ -24,7 +24,8 @@ export function adaptRequest<S extends Schema>(
   };
 }
 
-export function adaptSort(indexName: string) {
+export function adaptSort(indexName?: string) {
+  if (!indexName) return;
   const parts = indexName.split("_");
   if (parts.length < 3) return;
   const field = parts[parts.length - 2];

@@ -12,7 +12,6 @@ InstantSearch.js adapter for facets
   - https://www.algolia.com/doc/api-reference/api-parameters/filters/
 - `adaptHit` requires id
 - `adaptFacets` maybe make an option to return it as Object instead of array in the Facets library itself
-- `searchForFacetValues` maybe implement
 - update [readme](https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/README.md)
 - add `@stereobooster/facets` as peerDependency
 - `processingTimeMS`

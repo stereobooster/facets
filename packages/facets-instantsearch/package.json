@@ -26,10 +26,11 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
-    "@stereobooster/facets": "workspace:*"
+    "@stereobooster/facets": "workspace:*",
+    "@algolia/client-search": "^4.20.0"
   },
   "devDependencies": {
-    "@algolia/client-search": "^4.20.0",
+    "instantsearch.js": "4.60.0",
     "microbundle": "^0.15.1",
     "vitest": "^0.34.6"
   }
