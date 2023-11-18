@@ -6,6 +6,7 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
+- [ ] filter out 0 frequency facets
 - [ ] move index to worker?
 
 ### Snippeting doesn't work

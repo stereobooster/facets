@@ -4,7 +4,7 @@ export const searchBox = searchBoxWidget({
   container: '[data-widget="searchbox"]',
   placeholder: "Product, brand, color, …",
   templates: {
-    submit: (_, { html }) => html`
+    submit: () => `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"

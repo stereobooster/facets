@@ -3,7 +3,7 @@ import { clearRefinements } from "instantsearch.js/es/widgets";
 export const clearFilters = clearRefinements({
   container: '[data-widget="clear-filters"]',
   templates: {
-    resetLabel: (_, { html }) => html`
+    resetLabel: () => `
       <div class="clear-filters">
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -10,17 +10,8 @@ h2 {
 }
 
 body {
-  font-family:
-    Open Sans,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
+  font-family: Open Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
   -webkit-font-smoothing: antialiased;
 }
@@ -339,6 +330,11 @@ mark {
 
 .ais-RatingMenu-starIcon {
   margin-right: 0.5rem;
+}
+
+/* To fix issue with reload */
+.ais-RatingMenu-starIcon {
+  pointer-events: none;
 }
 
 /* Hide all mobile-specific design on desktop */

@@ -9,8 +9,7 @@ const clearFilters = panel({
 export const clearFiltersEmptyResults = clearFilters({
   container: '[data-widget="clear-filters-empty-state"]',
   templates: {
-    // @ts-expect-error fix later
-    resetLabel: (_, { html }) => html`
+    resetLabel: () => `
       <div class="clear-filters">
         <svg
           xmlns="http://www.w3.org/2000/svg"

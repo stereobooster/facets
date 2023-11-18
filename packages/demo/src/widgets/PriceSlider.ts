@@ -4,7 +4,7 @@ import { collapseButtonText } from "../templates/panel";
 
 const priceRangeSlider = panel({
   templates: {
-    header: (_, { html }) => html`Price`,
+    header: () => `Price`,
     collapseButtonText,
   },
   collapsed: () => false,

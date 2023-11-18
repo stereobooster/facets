@@ -16,8 +16,7 @@ export const pagination = paginationWithMultiplePages({
   showFirst: false,
   showLast: false,
   templates: {
-    // @ts-expect-error fix later
-    previous: (_, { html }) => html`
+    previous: () => `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="10"
@@ -36,8 +35,7 @@ export const pagination = paginationWithMultiplePages({
         </g>
       </svg>
     `,
-    // @ts-expect-error fix later
-    next: (_, { html }) => html`
+    next: () => `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="10"

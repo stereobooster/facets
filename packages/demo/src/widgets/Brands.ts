@@ -17,8 +17,7 @@ export const brands = brandRefinementList({
   searchablePlaceholder: "Search for brands…",
   searchableShowReset: false,
   templates: {
-    // @ts-expect-error fix later
-    searchableSubmit: (_, { html }) => html`
+    searchableSubmit: () => `
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="12"

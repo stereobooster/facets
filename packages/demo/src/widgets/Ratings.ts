@@ -4,7 +4,7 @@ import { collapseButtonText } from "../templates/panel";
 
 const ratingsMenu = panel({
   templates: {
-    header: (_, { html }) => html`Ratings`,
+    header: () => `Ratings`,
     collapseButtonText,
   },
   collapsed: () => false,
@@ -20,7 +20,11 @@ export const ratings = ratingsMenu({
         class="${cssClasses.link}"
         aria-label="${label} & up"
         href="${url}"
-        onClick="${(e: Event) => e.preventDefault()}"
+        onClick="${(e: Event) => {
+          /* To fix issue with reload */
+          window.history.replaceState(null, "", url);
+          e.preventDefault();
+        }}"
         disabled=${count === 0}
       >
         ${stars.map(
@@ -39,7 +43,6 @@ export const ratings = ratingsMenu({
             </svg>
           `
         )}
-
         <span class="${cssClasses.count}">${count}</span>
       </a>
     `,
