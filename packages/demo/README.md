@@ -6,8 +6,6 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- [ ] fix "free shiping" filter 
-  - need to convert types `{ free_shipping: ["true"] }`
 - [ ] implement search for brands filter
 - [ ] fix "category" filter
   - support multi-level objects with "paths" e.g. `hierarchicalCategories.lvl0`

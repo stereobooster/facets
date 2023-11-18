@@ -16,3 +16,4 @@ InstantSearch.js adapter for facets
 - `searchForFacetValues` maybe implement
 - update [readme](https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/README.md)
 - add `@stereobooster/facets` as peerDependency
+- `processingTimeMS`

@@ -2,26 +2,17 @@
 
 ## TODO
 
+- monorepo tool - to run all `dev` commands in all `packages/*`
 - github CI
 - prettier, eslint, typescript
 - update readmes
+- logo?  trillion, maybe
 - publish
 - host online demo
 
-**Name?**
-  - https://www.npmjs.com/package/facets taken by 10 year old package
-  - https://www.npmjs.com/package/hypercube squated
-  - https://www.npmjs.com/package/teseract taken
-  - https://www.npmjs.com/package/trillion taken
-  - prisma, rainbow, cuts - taken
-  - https://www.npmjs.com/package/aspects taken
-  - shape sorter game
-  - sieve
-  - just use `@stereobooster` prefix?
-
 **Workspace**:
   - [main package](/packages/facets/README.md)
-  - [InstantSearch adpater](/packages/facets-instantsearch/README.md)
+  - [InstantSearch adapter](/packages/facets-instantsearch/README.md)
   - [demo](/packages/demo/README.md)
   - query string parser
   - demo with graph?

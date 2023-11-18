@@ -8,11 +8,12 @@ import { adaptResponse } from "./adaptResponse";
 import { adaptRequest } from "./adaptRequest";
 
 export function getSearchClient<S extends Schema, I extends Item<S>>(
-  index: Facets<S, I>
+  index: Facets<S, I>,
+  schema: S
 ) {
   return {
     search: (queries: MultipleQueriesQuery[]) =>
-      performSearch(queries, index),
+      performSearch(queries, index, schema),
     searchForFacetValues: () => {
       throw new Error("Not implemented");
     },
@@ -28,11 +29,12 @@ export function createIndex<S extends Schema, I extends Item<S>>(
 
 export function performSearch<S extends Schema, I extends Item<S>>(
   requests: MultipleQueriesQuery[],
-  index: Facets<S, I>
+  index: Facets<S, I>,
+  schema: S
 ): Readonly<Promise<MultipleQueriesResponse<object>>> {
   let processingTimeMS = 0;
   const responses = requests.map((request) => {
-    const adaptedRequest = adaptRequest(request);
+    const adaptedRequest = adaptRequest(request, schema);
     const result = index.search(adaptedRequest);
 
     // processingTimeMS = processingTimeMS + itemsJsRes.timings.total;

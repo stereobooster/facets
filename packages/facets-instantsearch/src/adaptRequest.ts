@@ -2,7 +2,8 @@ import { MultipleQueriesQuery } from "@algolia/client-search";
 import { Schema, SearchOptions } from "@stereobooster/facets";
 
 export function adaptRequest<S extends Schema>(
-  request: MultipleQueriesQuery
+  request: MultipleQueriesQuery,
+  schema: Schema
 ): SearchOptions<S> {
   // request.params.attributesToSnippet = ["description:10"]
 
@@ -17,7 +18,7 @@ export function adaptRequest<S extends Schema>(
     perPage: request.params?.hitsPerPage,
     sort: adaptSort(request.indexName),
     facetFilter: {
-      ...adaptFacetFilters(request.params?.facetFilters as any),
+      ...adaptFacetFilters(request.params?.facetFilters as any, schema),
       ...adaptNumericFilters(request.params?.numericFilters as any),
     } as any,
   };
@@ -33,21 +34,22 @@ export function adaptSort(indexName: string) {
 }
 
 export function adaptFacetFilters(
-  facetFilters: string | string[] | string[][] | undefined
+  facetFilters: string | string[] | string[][] | undefined,
+  schema: Schema
 ) {
   const filter: Record<string, string[]> = Object.create(null);
 
   if (!facetFilters) return filter;
   if (typeof facetFilters === "string") {
-    adaptFacetFilter(facetFilters, filter);
+    adaptFacetFilter(facetFilters, filter, schema);
     return filter;
   }
 
   facetFilters.forEach((facets) => {
     if (Array.isArray(facets)) {
-      facets.forEach((facet) => adaptFacetFilter(facet, filter));
+      facets.forEach((facet) => adaptFacetFilter(facet, filter, schema));
     } else {
-      adaptFacetFilter(facets, filter);
+      adaptFacetFilter(facets, filter, schema);
     }
   });
 
@@ -56,14 +58,20 @@ export function adaptFacetFilters(
 
 export function adaptFacetFilter(
   facet: string,
-  filter: Record<string, string[]>
+  filter: Record<string, string[]>,
+  schema: Schema
 ) {
   const facetRegex = new RegExp(/(.+)(:)(.+)/);
-  const [, name, , value] = facet.match(facetRegex) || [];
-  if (filter[name]) {
-    filter[name].push(value);
+  let [, field, , value] = facet.match(facetRegex) || [];
+
+  if (schema[field].type === "boolean") {
+    // @ts-expect-error fix later
+    value = value === "true" ? true : value === "false" ? false : value
+  }
+  if (filter[field]) {
+    filter[field].push(value);
   } else {
-    filter[name] = [value];
+    filter[field] = [value];
   }
 }
 
@@ -109,6 +117,8 @@ export function adaptNumericFilter(
       filter[field].from = parseFloat(value);
       break;
     case "=":
+      // filter[field] = [parseFloat(value)];
+      // break;
     case "!=":
       throw new Error("Not implemented!");
   }
