@@ -66,7 +66,7 @@ export function adaptFacetFilter(
 
   if (schema[field].type === "boolean") {
     // @ts-expect-error fix later
-    value = value === "true" ? true : value === "false" ? false : value
+    value = value === "true" ? true : value === "false" ? false : value;
   }
   if (filter[field]) {
     filter[field].push(value);
@@ -117,8 +117,8 @@ export function adaptNumericFilter(
       filter[field].from = parseFloat(value);
       break;
     case "=":
-      // filter[field] = [parseFloat(value)];
-      // break;
+    // filter[field] = [parseFloat(value)];
+    // break;
     case "!=":
       throw new Error("Not implemented!");
   }

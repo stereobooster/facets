@@ -4,12 +4,12 @@
 
 ## TODO
 
-- numeric filter
-  - support `>` (not just `>=`), `<` (not just `<=`),
-  - support multiple ranges e.g `[{ from, to }, { eq }, { neq }]`
 - more than one level objects
 - search for facets
 - highilght search results
+- numeric filter
+  - support `>` (not just `>=`), `<` (not just `<=`),
+  - support multiple ranges e.g `[{ from, to }, { eq }, { neq }]`
 - more tests
 - errors and warnings
 - event dispatcher to allow async loading, async indexing

@@ -16,7 +16,7 @@ export const ratings = ratingsMenu({
   templates: {
     item: `
 {{#count}}
-  <a class="{{cssClasses.link}}" aria-label="{{value}} & up" href="{{url}}">
+  <a class="{{cssClasses.link}}" aria-label="{{value}} & up" href="{{url}}" onclick="event.preventDefault()">
 {{/count}}
 {{^count}}
   <div class="{{cssClasses.link}}" aria-label="{{value}} & up" disabled>
