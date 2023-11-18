@@ -2,7 +2,6 @@
 
 ## TODO
 
-- monorepo tool - to run all `dev` commands in all `packages/*`
 - github CI
 - prettier, eslint, typescript
 - update readmes

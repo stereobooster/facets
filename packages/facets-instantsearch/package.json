@@ -20,7 +20,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "vitest",
+    "test": "echo 'Not tests here'",
     "prepublishOnly": "npm run build",
     "build": "rm -rf dist && microbundle",
     "dev": "microbundle watch"
