@@ -10,7 +10,7 @@ InstantSearch.js adapter for facets
   - https://www.algolia.com/doc/api-reference/api-parameters/numericFilters/
   - https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/
   - https://www.algolia.com/doc/api-reference/api-parameters/filters/
-- `adaptHit` requires id
+- `adaptHit` requires id - use `idKey` configuration
 - update [readme](https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/README.md)
 - add `@stereobooster/facets` as peerDependency
 - `processingTimeMS`

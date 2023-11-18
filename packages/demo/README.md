@@ -6,7 +6,22 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- [ ] try anothe text search enging
+- [ ] remove custom fonts
+- [ ] use css from npm
 - [ ] move index to worker?
-- [ ] fix `helpers.highlight` in `Products.ts`
 - [ ] fix `helpers.snippet` in `Products.ts`
+
+```js
+request.params.attributesToSnippet = ["description:10"]
+```
+
+```json
+{
+  "_snippetResult": {
+    "description": {
+      "value": "Enjoy smart access to videos, games and apps with this …",
+      "matchLevel": "none"
+    }
+  }
+}
+```

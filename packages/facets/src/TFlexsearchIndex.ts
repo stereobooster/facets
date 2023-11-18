@@ -1,18 +1,23 @@
 import flexsearch, { SearchOptions } from "flexsearch";
-// @ts-ignore
+// @ts-expect-error type signatures outdated
 const { Document } = flexsearch;
 
-import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
+import {
+  TextIndexBase,
+  TextIndexBaseOptions,
+  TextSearchOptions,
+} from "./TextIndex";
 
 export class TFlexsearchIndex extends TextIndexBase {
   static usesAddOne = true;
   static requiresId = false;
   static usesPagination = true;
+  static canHighlight = false;
 
   #index: typeof Document;
 
-  constructor({ fields }: TextIndexBaseOptions) {
-    super({ fields });
+  constructor({ fields, idKey }: TextIndexBaseOptions) {
+    super({ fields, idKey });
     this.#index = new Document({ index: fields, store: false });
   }
 
@@ -20,10 +25,7 @@ export class TFlexsearchIndex extends TextIndexBase {
     this.#index.add(id, item);
   }
 
-  search(
-    query,
-    options?: SearchOptions & TextSearchOptions
-  ) {
+  search(query, options?: SearchOptions & TextSearchOptions) {
     let { page, perPage, ...rest } = options || {};
     page = page || 0;
     perPage = perPage || 20;
@@ -45,9 +47,11 @@ export class TFlexsearchIndex extends TextIndexBase {
       });
     });
 
-    return [...resultsByRelevance.entries()]
-      .sort((a, b) => a[1] - b[1])
-      .slice(page * perPage, (page + 1) * perPage)
-      .map((a) => a[0]);
+    return {
+      ids: [...resultsByRelevance.entries()]
+        .sort((a, b) => a[1] - b[1])
+        .slice(page * perPage, (page + 1) * perPage)
+        .map((a) => a[0]),
+    };
   }
 }

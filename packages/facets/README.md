@@ -4,7 +4,12 @@
 
 ## TODO
 
-- highilght search results
+- support highlight
+  - [x] for TQuickscoreIndex
+  - [ ] for TMinisearchIndex
+  - [ ] for TFuseIndex
+  - [ ] make it configurable so I can remove hardcode from `highlight` function
+  - [ ] ability to disable it if it's not required
 - facet request
   - `facets: "price", hitsPerPage: 0, ​maxValuesPerFacet: 10`
 - search for facets

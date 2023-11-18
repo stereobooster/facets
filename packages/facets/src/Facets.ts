@@ -169,7 +169,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
   }
 
   search(options?: SearchOptions<S>): SearchResults<S, I> {
-    const { sortByText, idsByText, facetFilterInternal, idsByFacet } =
+    const { sortByText, idsByText, facetFilterInternal, idsByFacet, matches } =
       this.#searchAll(options);
 
     let ids: number[] | undefined;
@@ -200,8 +200,23 @@ export class Facets<S extends Schema, I extends Item<S>> {
       items = this.#items;
     }
 
+    const highlighter =
+      matches &&
+      options?.query &&
+      this.#textIndex &&
+      this.#config.textIndex?.canHighlight
+        ? this.#textIndex.highlight(matches)
+        : undefined;
+
     return {
-      ...paginate(items, options?.page, options?.perPage),
+      ...paginate(
+        items,
+        options?.page,
+        options?.perPage,
+        highlighter
+          ? (x) => ({ ...x, _highlightResult: highlighter(x) })
+          : undefined
+      ),
       facets: this.#getFacets(facetFilterInternal, idsByText) as any,
     };
   }
@@ -220,13 +235,16 @@ export class Facets<S extends Schema, I extends Item<S>> {
   #searchText(query: string | undefined) {
     let sortByText: Array<number> | undefined;
     let idsByText: SparseTypedFastBitSet | undefined = undefined;
+    let matches: any;
     if (this.#textIndex && query) {
-      sortByText = this.#textIndex.search(query, {
+      const res = this.#textIndex.search(query, {
         perPage: this.#items.length,
       });
+      sortByText = res.ids;
+      matches = res.matches;
       idsByText = new SparseTypedFastBitSet(sortByText);
     }
-    return { sortByText, idsByText };
+    return { sortByText, idsByText, matches };
   }
 
   #searchFacets(facetFilter: FacetFilter<S> | undefined) {
@@ -463,7 +481,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
 
     const textIndexClass = this.#config.textIndex;
     if (textIndexClass) {
-      this.#textIndex = new textIndexClass({ fields: searchableFields });
+      this.#textIndex = new textIndexClass({ fields: searchableFields, idKey });
     }
 
     const accessors = Object.create(null);

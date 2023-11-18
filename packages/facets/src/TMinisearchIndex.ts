@@ -1,19 +1,26 @@
-import MiniSearch, { SearchOptions } from "minisearch";
-import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
+import MiniSearch, { MatchInfo, SearchOptions } from "minisearch";
+import {
+  TextIndexBase,
+  TextIndexBaseOptions,
+  TextSearchOptions,
+} from "./TextIndex";
 
 export class TMinisearchIndex extends TextIndexBase {
   static usesAddAll = true;
   static requiresId = true;
   static usesPagination = false;
+  static canHighlight = false;
 
   #index: MiniSearch<any>;
+  #idKey: string;
 
-  constructor({ fields }: TextIndexBaseOptions) {
-    super({ fields });
+  constructor({ fields, idKey }: TextIndexBaseOptions) {
+    super({ fields, idKey });
     this.#index = new MiniSearch({
       fields,
       storeFields: [],
     });
+    this.#idKey = idKey;
   }
 
   addAll(items: any[]) {
@@ -21,6 +28,17 @@ export class TMinisearchIndex extends TextIndexBase {
   }
 
   search(query, options?: SearchOptions & TextSearchOptions) {
-    return this.#index.search(query, options).map((x) => x.id);
+    const matches = new Map<number, MatchInfo>();
+    return {
+      ids: this.#index.search(query, options).map((x) => {
+        matches.set(x[this.#idKey], x.match);
+        return x.id[this.#idKey];
+      }),
+      matches,
+    };
   }
+
+  // highlight(matches: Map<number, MatchInfo>) {
+  //   throw new Error("not impelemted");
+  // }
 }

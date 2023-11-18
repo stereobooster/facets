@@ -20,7 +20,7 @@ import {
   sortBy,
 } from "./widgets";
 
-import { Schema, TFuseIndex } from "@stereobooster/facets";
+import { Schema, TQuickscoreIndex } from "@stereobooster/facets";
 
 import {
   createIndex,
@@ -99,7 +99,7 @@ const schema = {
   },
 } satisfies Schema;
 
-const index = createIndex({ textIndex: TFuseIndex, schema }, data);
+const index = createIndex({ textIndex: TQuickscoreIndex, schema }, data);
 const searchClient = getSearchClient(index, schema);
 
 const search = instantsearch({

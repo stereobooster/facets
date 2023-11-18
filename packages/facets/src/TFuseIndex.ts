@@ -1,19 +1,28 @@
-import Fuse, { IFuseOptions, FuseSearchOptions } from "fuse.js";
-import { TextIndexBase, TextIndexBaseOptions, TextSearchOptions } from "./TextIndex";
+import Fuse, {
+  IFuseOptions,
+  FuseSearchOptions,
+  FuseResultMatch,
+} from "fuse.js";
+import {
+  TextIndexBase,
+  TextIndexBaseOptions,
+  TextSearchOptions,
+} from "./TextIndex";
 
 export class TFuseIndex extends TextIndexBase {
   static usesAddAll = true;
   static requiresId = false;
   static usesPagination = false;
+  static canHighlight = false;
 
   #options: IFuseOptions<string>;
   #index: Fuse<any>;
 
-  constructor({ fields }: TextIndexBaseOptions) {
-    super({ fields });
+  constructor({ fields, idKey }: TextIndexBaseOptions) {
+    super({ fields, idKey });
     this.#options = {
-      includeScore: true,
       keys: fields,
+      includeMatches: true,
     };
   }
 
@@ -22,6 +31,18 @@ export class TFuseIndex extends TextIndexBase {
   }
 
   search(query, options?: FuseSearchOptions & TextSearchOptions) {
-    return this.#index.search(query, options).map((x) => x.refIndex);
+    const matches = new Map<number, ReadonlyArray<FuseResultMatch>>();
+    return {
+      ids: this.#index.search(query, options).map((x) => {
+        matches.set(x.refIndex, x.matches!);
+        return x.refIndex;
+      }),
+      matches,
+    };
   }
+
+  // highlight(matches: Map<number, ReadonlyArray<FuseResultMatch>>) {
+  //   const match = matches.get(id)!;
+  //   throw new Error("not impelemted");
+  // }
 }

@@ -94,6 +94,12 @@ sort: [
 ];
 ```
 
+or
+
+```js
+sort: [["strColumn", "asc"], ["numColumn", "desc"]],
+```
+
 **Note**: this is bad idea, because order matters
 
 ```js
@@ -108,7 +114,6 @@ sort: {
 - string as date
   - works for ISO-8601 dates out of box
 - string as number
-  - as trivial as `parseFloat`. `NaN` should be treated as null?
+  - as trivial as `parseFloat`
+  - `NaN` should be treated as null?
 - no sense to support non-JSON types
-- arrays - no support
-- nested fields

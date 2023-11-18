@@ -11,10 +11,9 @@ export const products = hits({
 
   <div class="hit-info-container">
     <p class="hit-category">{{categories.0}}</p>
-    <h1>{{name}}</h1>
-    <p class="hit-description">{{description}}</p>
     <h1>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</h1>
-    <p class="hit-description">{{#helpers.snippet}}{ "attribute": "description" }{{/helpers.snippet}}</p>
+    <p class="hit-description">{{#helpers.highlight}}{ "attribute": "description" }{{/helpers.highlight}}</p>
+    <!-- <p class="hit-description">{{#helpers.snippet}}{ "attribute": "description" }{{/helpers.snippet}}</p> -->
 
     <footer>
       <p>
