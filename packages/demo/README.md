@@ -6,7 +6,6 @@ Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
 
 ## TODO
 
-- [ ] fix "price" filter
 - [ ] fix "free shiping" filter 
   - need to convert types `{ free_shipping: ["true"] }`
 - [ ] implement search for brands filter

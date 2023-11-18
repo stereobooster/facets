@@ -4,15 +4,6 @@ import { Schema, SearchOptions } from "@stereobooster/facets";
 export function adaptRequest<S extends Schema>(
   request: MultipleQueriesQuery
 ): SearchOptions<S> {
-  const response = {
-    query: request.params?.query,
-    page: request.params?.page,
-    perPage: request.params?.hitsPerPage,
-    sort: adaptSort(request.indexName),
-    facetFilter: adaptFacetFilters(request.params?.facetFilters) as any,
-  };
-
-  // request.params.numericFilters = ["price>=1741"]
   // request.params.attributesToSnippet = ["description:10"]
 
   // Facet request:
@@ -20,13 +11,16 @@ export function adaptRequest<S extends Schema>(
   // hitsPerPage: 0
   // ​maxValuesPerFacet: 10
 
-  // const numericFilters = request.params?.numericFilters;
-  // if (numericFilters && numericFilters.length > 0) {
-  //   const filters = adaptNumericFilters(numericFilters);
-  //   response.filter = (item) => filters.every((filter) => filter(item));
-  // }
-
-  return response;
+  return {
+    query: request.params?.query,
+    page: request.params?.page,
+    perPage: request.params?.hitsPerPage,
+    sort: adaptSort(request.indexName),
+    facetFilter: {
+      ...adaptFacetFilters(request.params?.facetFilters as any),
+      ...adaptNumericFilters(request.params?.numericFilters as any),
+    } as any,
+  };
 }
 
 export function adaptSort(indexName: string) {
@@ -39,32 +33,31 @@ export function adaptSort(indexName: string) {
 }
 
 export function adaptFacetFilters(
-  facetFilters:
-    | string
-    | readonly string[]
-    | readonly (string | readonly string[])[]
-    | undefined
+  facetFilters: string | string[] | string[][] | undefined
 ) {
-  if (!facetFilters) return;
   const filter: Record<string, string[]> = Object.create(null);
 
+  if (!facetFilters) return filter;
   if (typeof facetFilters === "string") {
-    filterRegex(facetFilters, filter);
+    adaptFacetFilter(facetFilters, filter);
     return filter;
   }
 
   facetFilters.forEach((facets) => {
     if (Array.isArray(facets)) {
-      facets.forEach((facet) => filterRegex(facet, filter));
+      facets.forEach((facet) => adaptFacetFilter(facet, filter));
     } else {
-      filterRegex(facets as string, filter);
+      adaptFacetFilter(facets, filter);
     }
   });
 
   return filter;
 }
 
-export function filterRegex(facet: string, filter: Record<string, string[]>) {
+export function adaptFacetFilter(
+  facet: string,
+  filter: Record<string, string[]>
+) {
   const facetRegex = new RegExp(/(.+)(:)(.+)/);
   const [, name, , value] = facet.match(facetRegex) || [];
   if (filter[name]) {
@@ -74,43 +67,49 @@ export function filterRegex(facet: string, filter: Record<string, string[]>) {
   }
 }
 
-export function parseRange(range) {
-  /*
-   * Group 1: Find chars, one or more, except values: "<, =, !, >".
-   * Group 2: Find operator
-   * Group 3: Find digits, one or more.
-   */
-  return range.match(new RegExp(/([^<=!>]+)(<|<=|=|!=|>|>=)(\d+)/));
-}
+export function adaptNumericFilters(
+  numericFilters: string | string[] | string[][] | undefined
+) {
+  const filter: Record<string, { from?: number; to?: number }> =
+    Object.create(null);
 
-export function adaptNumericFilters(ranges) {
-  const filters = [] as Array<(x: any) => boolean>;
+  if (!numericFilters) return filter;
+  if (typeof numericFilters === "string") {
+    adaptNumericFilter(numericFilters, filter);
+    return filter;
+  }
 
-  ranges.map((range) => {
-    // ['price<=10', 'price', '<=', '10']
-    const [, field, operator, value] = parseRange(range);
-
-    switch (operator) {
-      case "<":
-        filters.push((item) => item[field] < value);
-        break;
-      case "<=":
-        filters.push((item) => item[field] <= value);
-        break;
-      case "=":
-        filters.push((item) => item[field] == value); // Needs to be comparison operator "=="
-        break;
-      case "!=":
-        filters.push((item) => item[field] != value);
-        break;
-      case ">":
-        filters.push((item) => item[field] > value);
-        break;
-      case ">=":
-        filters.push((item) => item[field] >= value);
-        break;
+  numericFilters.forEach((facets) => {
+    if (Array.isArray(facets)) {
+      facets.forEach((facet) => adaptNumericFilter(facet, filter));
+    } else {
+      adaptNumericFilter(facets, filter);
     }
   });
 
-  return filters;
+  return filter;
+}
+
+export function adaptNumericFilter(
+  facet: string,
+  filter: Record<string, { from?: number; to?: number }>
+) {
+  const numericRegex = new RegExp(/([^<=!>]+)(<|<=|=|!=|>|>=)(\d+)/);
+  const [, field, operator, value] = facet.match(numericRegex) || [];
+
+  if (!filter[field]) filter[field] = Object.create(null);
+
+  switch (operator) {
+    case "<":
+    case "<=":
+      filter[field].to = parseFloat(value);
+      break;
+    case ">":
+    case ">=":
+      filter[field].from = parseFloat(value);
+      break;
+    case "=":
+    case "!=":
+      throw new Error("Not implemented!");
+  }
 }
