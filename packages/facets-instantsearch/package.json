@@ -5,6 +5,8 @@
   "keywords": ["instantsearch", "faceted", "search", "search-engine", "fulltext", "browser", "client-side"],
   "author": "stereobooster",
   "license": "MIT",
+  "repository": "git@github.com:stereobooster/facets.git",
+  "homepage": "https://github.com/stereobooster/facets/tree/main/packages/facets-instantsearch",
   "type": "module",
   "source": "src/index.ts",
   "exports": {

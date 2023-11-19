@@ -1,12 +1,15 @@
 # facets-instantsearch demo
 
-Copy paste of https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce with slight changes.
+Demo of [`facets`](https://github.com/stereobooster/facets) + `facets-instantsearch`.
 
-Data copied from https://github.com/algolia/datasets/tree/master/ecommerce.
+Copy paste of [instantsearch e-commerce example](https://github.com/algolia/instantsearch/tree/master/examples/js/e-commerce) with slight changes.
+
+Data copied from [algolia/datasets](https://github.com/algolia/datasets/tree/master/ecommerce.)
 
 ## TODO
 
 - [ ] filter out 0 frequency facets
+- [ ] for prices I only need `min` and `max`, I don't need to intersect all facets
 - [ ] move index to worker?
 
 ### Snippeting doesn't work

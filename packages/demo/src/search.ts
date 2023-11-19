@@ -96,7 +96,7 @@ const schema = {
 
 const data = await fetch("/records.json").then((x) => x.json());
 // if there would be facets client as webworker e.g. asyncrhonious it would need separate adapter
-const index = new Facets({ textIndex: TQuickscoreIndex, schema }, data);
+const index = new Facets({ textIndex: TQuickscoreIndex, schema, idKey: "objectID" }, data);
 const searchClient = getSearchClient(index);
 const search = instantsearch({
   searchClient,
