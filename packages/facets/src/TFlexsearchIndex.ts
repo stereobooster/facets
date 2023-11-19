@@ -25,7 +25,7 @@ export class TFlexsearchIndex extends TextIndexBase {
     this.#index.add(id, item);
   }
 
-  search(query, options?: SearchOptions & TextSearchOptions) {
+  search(query: string, options?: SearchOptions & TextSearchOptions) {
     let { page, perPage, ...rest } = options || {};
     page = page || 0;
     perPage = perPage || 20;
@@ -33,10 +33,14 @@ export class TFlexsearchIndex extends TextIndexBase {
       ...rest,
       offset: 0,
       limit: perPage * (page + 1),
-    });
-    if (results.length === 1) return results[0].result;
+    }) as Array<{ result: number[] }>;
+    if (results.length === 1)
+      return {
+        ids: results[0].result,
+        matches: new Map<number, any>(),
+      };
 
-    const resultsByRelevance = new Map();
+    const resultsByRelevance = new Map<number, number>();
     results.forEach(({ result }) => {
       const factor = 1;
       result.forEach((id, i) => {
@@ -52,6 +56,7 @@ export class TFlexsearchIndex extends TextIndexBase {
         .sort((a, b) => a[1] - b[1])
         .slice(page * perPage, (page + 1) * perPage)
         .map((a) => a[0]),
+      matches: new Map<number, any>(),
     };
   }
 }

@@ -26,7 +26,8 @@
     "prepublishOnly": "npm run build",
     "build": "rm -rf dist && microbundle",
     "dev": "microbundle watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "tsc": "tsc"
   },
   "dependencies": {},
   "peerDependencies": {
@@ -38,6 +39,7 @@
     "@algolia/client-search": "^4.20.0",
     "instantsearch.js": "4.60.0",
     "microbundle": "^0.15.1",
+    "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
 }

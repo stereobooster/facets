@@ -150,10 +150,14 @@ export type SearchResults<S extends Schema, I extends Item<S>> = {
 };
 
 export class Facets<S extends Schema, I extends Item<S>> {
-  #items: I[];
-  #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
   #config: FacetsConfig<S>;
+  // @ts-expect-error it is assigned later
+  #items: I[];
+  // @ts-expect-error it is assigned later
+  #indexes: Record<string, InvertedIndex<SupportedFieldTypes>>;
+  // @ts-expect-error it is assigned later
   #textIndex: InstanceType<TextIndex>;
+  // @ts-expect-error it is assigned later
   #fullFacets: Record<
     string,
     Array<[SupportedFieldTypes, number, SparseTypedFastBitSet]>
@@ -279,7 +283,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
           const to: number = selected.to || Infinity;
           (this.#indexes[field] as InvertedIndex<number>)
             .values()
-            .forEach(([x, y, z]) => {
+            .forEach(([x, _, z]) => {
               if (x == null || x > to || x < from) return;
               if (!ids) {
                 ids = z.clone();

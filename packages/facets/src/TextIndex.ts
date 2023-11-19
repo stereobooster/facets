@@ -17,18 +17,18 @@ export class TextIndexBase {
   static requiresId = false;
   static canHighlight = false;
 
-  constructor(opt: TextIndexBaseOptions) {}
+  constructor(_opt: TextIndexBaseOptions) {}
 
-  search(query: string, options?: TextSearchOptions): TextIndexBaseResults {
+  search(_query: string, _options?: TextSearchOptions): TextIndexBaseResults {
     throw new Error("not impelemted");
   }
-  addAll(values: any[]): void {
+  addAll(_values: any[]): void {
     throw new Error("not impelemted");
   }
-  addOne(id: number, value: any): void {
+  addOne(_id: number, _value: any): void {
     throw new Error("not impelemted");
   }
-  highlight(matches: Map<number, any>): (value: any) => Record<string, string> {
+  highlight(_matches: Map<number, any>): (value: any) => Record<string, string> {
     throw new Error("not impelemted");
   }
 }

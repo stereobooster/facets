@@ -10,8 +10,8 @@ export class ITrieMapIndex<K> extends InvertedIndexMaplike<K> {
     this.index = new TrieMap();
   }
 
-  like(prefix) {
-    return this.index.find(prefix).reduce((p, [k, v]) => {
+  like(prefix: K) {
+    return this.index.find(prefix).reduce((p, [_, v]) => {
       p.union(v);
       return p;
     }, new SparseTypedFastBitSet());

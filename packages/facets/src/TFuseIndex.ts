@@ -16,6 +16,7 @@ export class TFuseIndex extends TextIndexBase {
   static canHighlight = false;
 
   #options: IFuseOptions<string>;
+  // @ts-expect-error it is assigned later
   #index: Fuse<any>;
 
   constructor({ fields, idKey }: TextIndexBaseOptions) {
@@ -30,7 +31,7 @@ export class TFuseIndex extends TextIndexBase {
     this.#index = new Fuse(items, this.#options);
   }
 
-  search(query, options?: FuseSearchOptions & TextSearchOptions) {
+  search(query: string, options?: FuseSearchOptions & TextSearchOptions) {
     const matches = new Map<number, ReadonlyArray<FuseResultMatch>>();
     return {
       ids: this.#index.search(query, options).map((x) => {

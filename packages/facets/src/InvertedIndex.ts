@@ -3,10 +3,10 @@ import { SparseTypedFastBitSet } from "typedfastbitset";
 export type FacetValue<K = unknown> = [K, number, SparseTypedFastBitSet];
 
 export class InvertedIndex<K = unknown> {
-  add(value: K, id: number): void {
+  add(_value: K, _id: number): void {
     throw new Error("Not implemented");
   }
-  get(value: K): SparseTypedFastBitSet {
+  get(_value: K): SparseTypedFastBitSet {
     throw new Error("Not implemented");
   }
   values(): Array<FacetValue<K>> {
@@ -22,6 +22,7 @@ interface Maplike<K, V> {
 }
 
 export class InvertedIndexMaplike<K = unknown> extends InvertedIndex<K> {
+  // @ts-expect-error fix later
   index: Maplike<K, SparseTypedFastBitSet>;
 
   add(value: K, id: number) {

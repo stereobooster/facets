@@ -3,6 +3,9 @@
   "pipeline": {
     "test": {},
     "clean": {},
+    "tsc": {
+      "dependsOn": ["^build"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]

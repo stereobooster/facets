@@ -26,7 +26,8 @@
     "prepublishOnly": "npm run build",
     "build": "rm -rf dist && microbundle",
     "dev": "microbundle watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "tsc": "tsc"
   },
   "dependencies": {
     "mnemonist": "^0.39.5",
@@ -45,6 +46,7 @@
     "minisearch": "^6.2.0",
     "quick-score": "^0.2.0",
     "microbundle": "^0.15.1",
+    "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   }
 }

@@ -9,6 +9,7 @@ export class TQuickscoreIndex extends TextIndexBase {
   static canHighlight = true;
 
   #fields: Array<string>;
+  // @ts-expect-error it is assigned later
   #index: QuickScore<any>;
   #idKey: string;
 
@@ -22,7 +23,7 @@ export class TQuickscoreIndex extends TextIndexBase {
     this.#index = new QuickScore(items, this.#fields);
   }
 
-  search(query) {
+  search(query: string) {
     const matches = new Map<number, Record<string, RangeTuple[]>>();
     return {
       ids: (this.#index.search(query) as ScoredObject<any>[]).map((x) => {

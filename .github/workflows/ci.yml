@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
  
+      - name: TypeScript
+        run: pnpm tsc
+
       - name: Test
         run: pnpm test
 

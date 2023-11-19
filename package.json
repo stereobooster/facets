@@ -3,9 +3,11 @@
     "test": "turbo run test",
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "tsc": "turbo run tsc"
   },
   "devDependencies": {
-    "turbo": "^1.10.16"
+    "turbo": "^1.10.16",
+    "typescript": "^5.2.2"
   }
 }

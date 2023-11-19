@@ -11,6 +11,9 @@ importers:
       turbo:
         specifier: ^1.10.16
         version: 1.10.16
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
 
   packages/demo:
     dependencies:
@@ -64,6 +67,9 @@ importers:
       quick-score:
         specifier: ^0.2.0
         version: 0.2.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
@@ -82,6 +88,9 @@ importers:
       microbundle:
         specifier: ^0.15.1
         version: 0.15.1
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
       vitest:
         specifier: ^0.34.6
         version: 0.34.6

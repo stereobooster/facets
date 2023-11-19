@@ -27,7 +27,7 @@ export class TMinisearchIndex extends TextIndexBase {
     this.#index.addAll(items);
   }
 
-  search(query, options?: SearchOptions & TextSearchOptions) {
+  search(query: string, options?: SearchOptions & TextSearchOptions) {
     const matches = new Map<number, MatchInfo>();
     console.log()
     return {

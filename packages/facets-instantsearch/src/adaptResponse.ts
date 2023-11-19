@@ -10,7 +10,7 @@ export function adaptResponse<S extends Schema, I extends Item<S>>(
     hits:
       idKey === "objectID"
         ? (response.items as any)
-        : response.items.map(adaptHit(idKey || "id")),
+        : response.items.map(adaptHit<I>(idKey || "id")),
     page: response.pagination.page,
     hitsPerPage: response.pagination.perPage,
     nbHits: response.pagination.total,
@@ -25,17 +25,17 @@ export function adaptResponse<S extends Schema, I extends Item<S>>(
 }
 
 export function adaptHit<I>(key: string) {
-  return (item: I): Hit<I> => ({
+  return (item: any): Hit<I> => ({
     objectID: item[key],
     ...item,
   });
 }
 
-export function adaptFacets(facets): Record<string, Record<string, number>> {
+export function adaptFacets(facets: any): Record<string, Record<string, number>> {
   const instantsearchFacets = Object.create(null);
   Object.keys(facets).forEach((field) => {
     instantsearchFacets[field] = Object.create(null);
-    facets[field].items.forEach(([value, frequency]) => {
+    facets[field].items.forEach(([value, frequency]: [string, number]) => {
       instantsearchFacets[field][value] = frequency;
     });
   });
@@ -44,7 +44,7 @@ export function adaptFacets(facets): Record<string, Record<string, number>> {
 }
 
 export function adaptFacetsStats(
-  facets
+  facets: any
 ): Record<string, { min: number; max: number; avg: number; sum: number }> {
   const instantsearchFacetsStats = Object.create(null);
   Object.keys(facets).forEach((field) => {
