@@ -3,7 +3,10 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5a9cb813-8600-4486-b611-8c56015b759a/deploy-status)](https://app.netlify.com/sites/facets-demo/deploys)
 
 <p align="center">
-  <img src="logo/logo.svg" alt="drawing" width="200"/>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo/logo-dark.svg">
+    <img alt="" src="logo/logo-light.svg" width="200">
+  </picture>
 </p>
 
 It is the monorepo repository:
