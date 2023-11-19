@@ -1,7 +1,5 @@
 # Facets monorepo
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/5a9cb813-8600-4486-b611-8c56015b759a/deploy-status)](https://app.netlify.com/sites/facets-demo/deploys)
-
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="logo/logo-dark.svg">
@@ -30,6 +28,8 @@ It is the monorepo repository:
 The main secret ingredient is [TypedFastBitSet.js](https://github.com/lemire/TypedFastBitSet.js/) - a fast set data structure. Using it and standard `Map` allows us to build an inverted-index data structure. From there, it's a pretty straightforward implementation.
 
 ## Demo
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5a9cb813-8600-4486-b611-8c56015b759a/deploy-status)](https://app.netlify.com/sites/facets-demo/deploys)
 
 It is easier to show than explain. [See online demo here](https://facets-demo.stereobooster.com/).
 
