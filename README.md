@@ -5,7 +5,8 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="logo/logo-dark.svg">
-    <img alt="" src="logo/logo-light.svg" width="200">
+    <source media="(prefers-color-scheme: light)" srcset="logo/logo-light.svg">
+    <img alt="" src="logo/logo.svg" width="200">
   </picture>
 </p>
 
