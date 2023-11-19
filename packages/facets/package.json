@@ -23,18 +23,25 @@
     "test": "vitest",
     "prepublishOnly": "npm run build",
     "build": "rm -rf dist && microbundle",
-    "dev": "microbundle watch"
+    "dev": "microbundle watch",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@orama/orama": "2.0.0-beta.4",
+    "mnemonist": "^0.39.5",
+    "typedfastbitset": "^0.4.2"
+  },
+  "peerDependencies": {
+    "@orama/orama": "^2.0.0-beta.4",
     "flexsearch": "^0.7.31",
     "fuse.js": "^7.0.0",
     "minisearch": "^6.2.0",
-    "mnemonist": "^0.39.5",
-    "quick-score": "^0.2.0",
-    "typedfastbitset": "^0.4.2"
+    "quick-score": "^0.2.0"
   },
   "devDependencies": {
+    "flexsearch": "^0.7.31",
+    "fuse.js": "^7.0.0",
+    "minisearch": "^6.2.0",
+    "quick-score": "^0.2.0",
     "microbundle": "^0.15.1",
     "vitest": "^0.34.6"
   }

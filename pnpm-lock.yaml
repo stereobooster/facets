@@ -26,6 +26,9 @@ importers:
       instantsearch.js:
         specifier: 4.60.0
         version: 4.60.0(algoliasearch@4.20.0)
+      quick-score:
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -37,43 +40,42 @@ importers:
   packages/facets:
     dependencies:
       '@orama/orama':
-        specifier: 2.0.0-beta.4
+        specifier: ^2.0.0-beta.4
         version: 2.0.0-beta.4
+      mnemonist:
+        specifier: ^0.39.5
+        version: 0.39.5
+      typedfastbitset:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
       flexsearch:
         specifier: ^0.7.31
         version: 0.7.31
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
-      minisearch:
-        specifier: ^6.2.0
-        version: 6.2.0
-      mnemonist:
-        specifier: ^0.39.5
-        version: 0.39.5
-      quick-score:
-        specifier: ^0.2.0
-        version: 0.2.0
-      typedfastbitset:
-        specifier: ^0.4.2
-        version: 0.4.2
-    devDependencies:
       microbundle:
         specifier: ^0.15.1
         version: 0.15.1
+      minisearch:
+        specifier: ^6.2.0
+        version: 6.2.0
+      quick-score:
+        specifier: ^0.2.0
+        version: 0.2.0
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
 
   packages/facets-instantsearch:
-    dependencies:
+    devDependencies:
       '@algolia/client-search':
         specifier: ^4.20.0
         version: 4.20.0
       '@stereobooster/facets':
         specifier: workspace:*
         version: link:../facets
-    devDependencies:
       instantsearch.js:
         specifier: 4.60.0
         version: 4.60.0(algoliasearch@4.20.0)
@@ -2770,7 +2772,7 @@ packages:
 
   /flexsearch@0.7.31:
     resolution: {integrity: sha512-XGozTsMPYkm+6b5QL3Z9wQcJjNYxp0CYn3U1gO7dwD6PAqU1SVWZxI9CCg3z+ml3YfqdPnrBehaBrnH2AGKbNA==}
-    dev: false
+    dev: true
 
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -2824,7 +2826,7 @@ packages:
   /fuse.js@7.0.0:
     resolution: {integrity: sha512-14F4hBIxqKvD4Zz/XjDc3y94mNZN6pRv3U13Udo0lNLCWRBUsrMv2xwcF/y/Z5sV6+FQW+/ow68cHpm4sunt8Q==}
     engines: {node: '>=10'}
-    dev: false
+    dev: true
 
   /generic-names@4.0.0:
     resolution: {integrity: sha512-ySFolZQfw9FoDb3ed9d80Cm9f0+r7qj+HJkWjeD9RBfpxEVTlVhol+gvaQB/78WbwYfbnNh8nWHHBSlg072y6A==}
@@ -3412,7 +3414,7 @@ packages:
 
   /minisearch@6.2.0:
     resolution: {integrity: sha512-BECkorDF1TY2rGKt9XHdSeP9TP29yUbrAaCh/C03wpyf1vx3uYcP/+8XlMcpTkgoU0rBVnHMAOaP83Rc9Tm+TQ==}
-    dev: false
+    dev: true
 
   /mkdirp@0.3.0:
     resolution: {integrity: sha512-OHsdUcVAQ6pOtg5JYWpCBo9W/GySVuwvP9hueRMW7UqshC0tbfzLv8wjySTPm3tfUZ/21CE9E1pJagOA91Pxew==}
@@ -4053,7 +4055,6 @@ packages:
 
   /quick-score@0.2.0:
     resolution: {integrity: sha512-y9PW9rl7BhjTykkGYi4wh0FsXWrWFv3IJVxtAI9FMargSOhqzRN3OjO2itpw63PoSu1FY07i8B2aCwpolQucOQ==}
-    dev: false
 
   /randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}

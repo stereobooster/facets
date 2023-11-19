@@ -23,13 +23,17 @@
     "test": "echo 'Not tests here'",
     "prepublishOnly": "npm run build",
     "build": "rm -rf dist && microbundle",
-    "dev": "microbundle watch"
+    "dev": "microbundle watch",
+    "clean": "rm -rf dist"
   },
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "@stereobooster/facets": "workspace:*",
     "@algolia/client-search": "^4.20.0"
   },
   "devDependencies": {
+    "@stereobooster/facets": "workspace:*",
+    "@algolia/client-search": "^4.20.0",
     "instantsearch.js": "4.60.0",
     "microbundle": "^0.15.1",
     "vitest": "^0.34.6"

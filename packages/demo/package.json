@@ -7,13 +7,15 @@
     "test": "echo 'Not tests here'",
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@stereobooster/facets": "workspace:*",
     "@stereobooster/facets-instantsearch": "workspace:*",
     "instantsearch.css": "^8.1.0",
-    "instantsearch.js": "4.60.0"
+    "instantsearch.js": "4.60.0",
+    "quick-score": "^0.2.0"
   },
   "devDependencies": {
     "typescript": "^5.2.2",

@@ -11,5 +11,4 @@ InstantSearch.js adapter for facets
   - https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/
   - https://www.algolia.com/doc/api-reference/api-parameters/filters/
 - update [readme](https://github.com/unplatform-io/instantsearch-itemsjs-adapter/blob/main/README.md)
-- add `@stereobooster/facets` as peerDependency
 - implement `processingTimeMS`

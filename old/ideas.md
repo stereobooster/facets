@@ -18,6 +18,11 @@
   - [BFloat16 wasm](https://github.com/tc39/proposal-float16array/issues/7)
   - RoaringWasm, TrieMap
   - preindexed data
+- query string parser
+- demo with graph?
+- alternative solutions
+  - test CSV instead of JSON (memory footprint)
+  - memoize sort order in `TypedArray` (Int16)
 
 ## Hiearchical filter
 
