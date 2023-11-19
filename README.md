@@ -62,7 +62,6 @@ Logo by Pravin Unagar from <a href="https://thenounproject.com/browse/icons/term
 
 ## TODO
 
-- fix broken test
 - prettier, eslint, typescript
 - publish
 - add example to [faceted-search demo](https://github.com/stereobooster/faceted-search)

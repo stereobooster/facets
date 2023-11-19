@@ -29,10 +29,11 @@ export class TMinisearchIndex extends TextIndexBase {
 
   search(query, options?: SearchOptions & TextSearchOptions) {
     const matches = new Map<number, MatchInfo>();
+    console.log()
     return {
       ids: this.#index.search(query, options).map((x) => {
         matches.set(x[this.#idKey], x.match);
-        return x.id[this.#idKey];
+        return x[this.#idKey];
       }),
       matches,
     };
