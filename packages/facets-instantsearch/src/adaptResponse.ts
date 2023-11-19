@@ -4,46 +4,39 @@ import { SearchResults, Schema, Item } from "@stereobooster/facets";
 export function adaptResponse<S extends Schema, I extends Item<S>>(
   response: SearchResults<S, I>,
   query: string,
-  processingTimeMS: number
+  idKey: string | undefined
 ): SearchResponse<I> {
-  const totalNumberOfPages = Math.ceil(
-    response.pagination.total / response.pagination.perPage
-  );
-
   return {
-    hits: response.items.map(adaptHit),
+    hits:
+      idKey === "objectID"
+        ? (response.items as any)
+        : response.items.map(adaptHit(idKey || "id")),
     page: response.pagination.page,
-    nbPages: totalNumberOfPages,
     hitsPerPage: response.pagination.perPage,
     nbHits: response.pagination.total,
-    processingTimeMS: processingTimeMS,
-    exhaustiveNbHits: true,
-    query: query,
-    params: "",
+    nbPages: Math.ceil(response.pagination.total / response.pagination.perPage),
     facets: adaptFacets(response.facets),
     facets_stats: adaptFacetsStats(response.facets),
+    processingTimeMS: 0,
+    query,
+    exhaustiveNbHits: true,
+    params: "",
   };
 }
 
-export function adaptHit<I>(item: I): Hit<I> {
-  return {
-    // @ts-expect-error
-    objectID: item.id,
+export function adaptHit<I>(key: string) {
+  return (item: I): Hit<I> => ({
+    objectID: item[key],
     ...item,
-    // _highlightResult: {}, // Highlighting not supported
-  };
+  });
 }
 
-export function adaptFacets(
-  itemsJsFacets
-): Record<string, Record<string, number>> {
-  const facetNames = Object.keys(itemsJsFacets);
-
+export function adaptFacets(facets): Record<string, Record<string, number>> {
   const instantsearchFacets = Object.create(null);
-  facetNames.forEach((name) => {
-    instantsearchFacets[name] = Object.create(null);
-    itemsJsFacets[name].items.forEach(([value, frequency]) => {
-      instantsearchFacets[name][value] = frequency;
+  Object.keys(facets).forEach((field) => {
+    instantsearchFacets[field] = Object.create(null);
+    facets[field].items.forEach(([value, frequency]) => {
+      instantsearchFacets[field][value] = frequency;
     });
   });
 
@@ -51,13 +44,12 @@ export function adaptFacets(
 }
 
 export function adaptFacetsStats(
-  itemsJsFacetsStats: object
+  facets
 ): Record<string, { min: number; max: number; avg: number; sum: number }> {
-  const facetNames = Object.keys(itemsJsFacetsStats);
   const instantsearchFacetsStats = Object.create(null);
-  facetNames.forEach((name) => {
-    if (itemsJsFacetsStats[name].stats) {
-      instantsearchFacetsStats[name] = itemsJsFacetsStats[name].stats;
+  Object.keys(facets).forEach((field) => {
+    if (facets[field].stats) {
+      instantsearchFacetsStats[field] = facets[field].stats;
     }
   });
 

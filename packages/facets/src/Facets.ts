@@ -37,7 +37,7 @@ export type FacetsConfig<S extends Schema> = {
   schema: S;
   textIndex?: TextIndex;
   sortConfig?: SortConfig;
-  // idKey?: string; - needs more work
+  idKey?: string;
 };
 
 type FacetFilterType<T extends SupportedFieldTypesTypes> = T extends "string"
@@ -161,10 +161,14 @@ export class Facets<S extends Schema, I extends Item<S>> {
 
   constructor(config: FacetsConfig<S>, items: I[] = []) {
     this.#config = config;
-    this.update(items);
+    this.load(items);
   }
 
-  update(items: I[]) {
+  config() {
+    return this.#config;
+  }
+
+  load(items: I[]) {
     this.#buildIndex(items);
   }
 
@@ -473,8 +477,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
   #buildIndex(items: any[]) {
     this.#items = items;
 
-    // In order to use custom id field need to pass it to textIndexClass
-    const idKey = "id"; //this.#options.idKey || "id";
+    const idKey = this.#config.idKey || "id";
     const searchableFields = Object.entries(this.#config.schema)
       .filter(([, fieldConfig]) => fieldConfig.text)
       .map(([field]) => field);

@@ -20,14 +20,8 @@ import {
   sortBy,
 } from "./widgets";
 
-import { Schema, TQuickscoreIndex } from "@stereobooster/facets";
-
-import {
-  createIndex,
-  getSearchClient,
-} from "@stereobooster/facets-instantsearch";
-
-const data = await fetch("/records.json").then((x) => x.json());
+import { Facets, Schema, TQuickscoreIndex } from "@stereobooster/facets";
+import { getSearchClient } from "@stereobooster/facets-instantsearch";
 
 const schema = {
   name: {
@@ -67,15 +61,9 @@ const schema = {
   //   facet: true,
   //   isObject: true,
   // },
-  type: {
-    type: "string",
-  },
   price: {
     type: "number",
     facet: true,
-  },
-  price_range: {
-    type: "string",
   },
   image: {
     type: "string",
@@ -87,21 +75,29 @@ const schema = {
     type: "boolean",
     facet: true,
   },
-  popularity: {
-    type: "number",
-  },
   rating: {
     type: "number",
     facet: true,
   },
-  objectID: {
-    type: "string",
+  // TODO: sort by popularity by default?
+  popularity: {
+    type: "number",
   },
+  // type: {
+  //   type: "string",
+  // },
+  // price_range: {
+  //   type: "string",
+  // },
+  // objectID: {
+  //   type: "string",
+  // },
 } satisfies Schema;
 
-const index = createIndex({ textIndex: TQuickscoreIndex, schema }, data);
-const searchClient = getSearchClient(index, schema);
-
+const data = await fetch("/records.json").then((x) => x.json());
+// if there would be facets client as webworker e.g. asyncrhonious it would need separate adapter
+const index = new Facets({ textIndex: TQuickscoreIndex, schema }, data);
+const searchClient = getSearchClient(index);
 const search = instantsearch({
   searchClient,
   indexName: "instant_search",

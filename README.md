@@ -2,7 +2,6 @@
 
 ## TODO
 
-- github CI
 - prettier, eslint, typescript
 - update readmes
 - logo?  trillion, maybe
