@@ -2,6 +2,8 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5a9cb813-8600-4486-b611-8c56015b759a/deploy-status)](https://app.netlify.com/sites/facets-demo/deploys)
 
+![](logo/logo.svg)
+
 It is the monorepo repository:
 
 - main package - [facets](/packages/facets/)
@@ -49,10 +51,13 @@ pnpm i
 pnpm run dev
 ```
 
+## Logo
+
+Logo by Pravin Unagar from <a href="https://thenounproject.com/browse/icons/term/trillion/" target="_blank" title="trillion Icons">Noun Project</a> (CC BY 3.0)
+
 ## TODO
 
 - fix broken test
-- logo? trillion, maybe
 - prettier, eslint, typescript
 - publish
 - add example to [faceted-search demo](https://github.com/stereobooster/faceted-search)
