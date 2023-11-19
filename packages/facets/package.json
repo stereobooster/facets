@@ -2,7 +2,7 @@
   "name": "@stereobooster/facets",
   "version": "0.1.0",
   "description": "",
-  "keywords": [],
+  "keywords": ["faceted", "search", "search-engine", "fulltext", "browser", "client-side"],
   "author": "stereobooster",
   "license": "MIT",
   "type": "module",

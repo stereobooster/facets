@@ -2,7 +2,7 @@
   "name": "@stereobooster/facets-instantsearch",
   "version": "0.1.0",
   "description": "InstantSearch.js adapter for facets",
-  "keywords": [],
+  "keywords": ["instantsearch", "faceted", "search", "search-engine", "fulltext", "browser", "client-side"],
   "author": "stereobooster",
   "license": "MIT",
   "type": "module",
