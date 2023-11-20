@@ -155,6 +155,12 @@ export type SearchResults<S extends Schema, I extends Item<S>> = {
   facets: FacetResults<S>;
 };
 
+export type FacetOptions<S extends Schema> = {
+  field: keyof S;
+  query?: string;
+  perPage?: number;
+};
+
 export class Facets<S extends Schema, I extends Item<S>> {
   #config: FacetsConfig<S>;
   // @ts-expect-error it is assigned later
@@ -245,14 +251,17 @@ export class Facets<S extends Schema, I extends Item<S>> {
     };
   }
 
-  facet(filed: string, options?: SearchOptions<S>): FacetResult {
+  facet(
+    { field, perPage, query }: FacetOptions<S>,
+    options?: SearchOptions<S>
+  ): FacetResult {
     const { idsByText, facetFilterInternal } = this.#searchAll(options);
     return this.#getFacet(
-      filed,
+      field as string,
       facetFilterInternal,
       idsByText,
-      options?.page,
-      options?.perPage
+      query,
+      perPage
     );
   }
 
@@ -372,16 +381,16 @@ export class Facets<S extends Schema, I extends Item<S>> {
     field: string,
     facetFilter: FacetFilterInternal | undefined,
     textSearch: SparseTypedFastBitSet | undefined,
-    page?: number,
+    facetQuery?: string,
     perPage?: number
   ) {
     const ff = this.#getFullFacets();
 
-    page = page || 0;
+    const page = 0;
     // @ts-expect-error fix later
     perPage = perPage || this.#config.schema[field].facet?.perPage || 20;
     // @ts-expect-error fix later
-    const showZeroes = this.#config.schema[field].facet?.showZeroes || true;
+    const showZeroes = this.#config.schema[field].facet?.showZeroes || false;
     const selectedFirst =
       // @ts-expect-error fix later
       this.#config.schema[field].facet?.selectedFirst || false;
@@ -398,19 +407,28 @@ export class Facets<S extends Schema, I extends Item<S>> {
       resultSet = textSearch;
     }
 
-    let newFacet = resultSet
-      ? ff[field].map(([x, , z]) => {
-          const zz = z.new_intersection(resultSet!);
-          return [x, zz.size(), zz] as [
-            SupportedFieldTypes,
-            number,
-            SparseTypedFastBitSet
-          ];
-        })
-      : ff[field];
+    let newFacet = ff[field];
+
+    if (this.#config.schema[field].type === "string" && facetQuery) {
+      // this can be filtered with TrieMap
+      newFacet = newFacet.filter(([x]) =>
+        (x as string).toLowerCase().startsWith(facetQuery)
+      );
+    }
+
+    if (resultSet) {
+      newFacet = newFacet.map(([x, , z]) => {
+        const zz = z.new_intersection(resultSet!);
+        return [x, zz.size(), zz] as [
+          SupportedFieldTypes,
+          number,
+          SparseTypedFastBitSet
+        ];
+      });
+    }
 
     if (resultSet && !showZeroes) {
-      newFacet = newFacet.filter(([x, y]) => y !== 0 || selected.includes(x));
+      newFacet = newFacet.filter(([x, y]) => y !== 0 || selected?.includes(x));
     }
 
     const sortConfig = this.#sortConfigForFacet(field);

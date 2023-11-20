@@ -5,6 +5,16 @@ export function adaptRequest<S extends Schema>(
   request: MultipleQueriesQuery,
   schema: Schema
 ): SearchOptions<S> {
+  const highlight =
+    request.params?.highlightPostTag && request.params?.highlightPreTag
+      ? {
+          start: request.params.highlightPreTag,
+          end: request.params.highlightPostTag,
+          key: "_highlightResult",
+          subKey: "value",
+        }
+      : undefined;
+
   return {
     query: request.params?.query,
     page: request.params?.page,
@@ -14,12 +24,7 @@ export function adaptRequest<S extends Schema>(
       ...adaptFacetFilters(request.params?.facetFilters as any, schema),
       ...adaptNumericFilters(request.params?.numericFilters as any),
     } as any,
-    highlight: {
-      start: "__ais-highlight__",
-      end: "__/ais-highlight__",
-      key: "_highlightResult",
-      subKey: "value",
-    },
+    highlight,
   };
 }
 

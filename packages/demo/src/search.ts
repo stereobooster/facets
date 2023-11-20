@@ -63,7 +63,9 @@ const schema = {
   // },
   price: {
     type: "number",
-    facet: true,
+    facet: {
+      showZeroes: true,
+    },
   },
   image: {
     type: "string",
@@ -77,7 +79,9 @@ const schema = {
   },
   rating: {
     type: "number",
-    facet: true,
+    facet: {
+      showZeroes: true,
+    },
   },
   // TODO: sort by popularity by default?
   popularity: {
@@ -96,7 +100,10 @@ const schema = {
 
 const data = await fetch("/records.json").then((x) => x.json());
 // if there would be facets client as webworker e.g. asyncrhonious it would need separate adapter
-const index = new Facets({ textIndex: TQuickscoreIndex, schema, idKey: "objectID" }, data);
+const index = new Facets(
+  { textIndex: TQuickscoreIndex, schema, idKey: "objectID" },
+  data
+);
 const searchClient = getSearchClient(index);
 const search = instantsearch({
   searchClient,
@@ -105,7 +112,7 @@ const search = instantsearch({
   insights: false,
   future: {
     preserveSharedStateOnUnmount: true,
-  }
+  },
 });
 
 search.addWidgets([

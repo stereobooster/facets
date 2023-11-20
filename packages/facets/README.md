@@ -24,14 +24,13 @@ The demo works, as you can see, but beyond that, there was no exhaustive testing
 
 ## TODO
 
+- default values for facet by type
+  - number
+    - sort by value asc
+    - `showZeroes=false`
 - [initialization](/notes/initialization.md)
-- facet request
-  - InstantSearch sometimes makes requests like this `facets: "price", hitsPerPage: 0, ​maxValuesPerFacet: 10`
-    - in this case there is no need to iterate over all facets (`facets: "price"`)
-    - it needs to respect `​maxValuesPerFacet`
-- search for facets
-  - right now search for facet is done outside. Making it inside would allow to do fewer intersections
-  - plus it would open possibility to use to use TrieMap for search
+- `​maxValuesPerFacet`
+- `facets: "price"`
 - numeric filter
   - support `>` (not just `>=`), `<` (not just `<=`)
   - support multiple ranges e.g `[{ from, to }, { eq }, { neq }]`
@@ -40,5 +39,6 @@ The demo works, as you can see, but beyond that, there was no exhaustive testing
   - warn if people try to use text search without providing text index
 - [benchmarks](https://github.com/tinylibs/tinybench)
   - performance seems to be good (except numeric range filter), but in order to be sure we need to do benchmark
-  - I interested if using TrieMap would allow to save memory
-
+  - I'm curious if using TrieMap would allow to save memory
+- benchmark memory
+  - https://www.valentinog.com/blog/node-usage/

@@ -23,7 +23,7 @@ export function getSearchClient<S extends Schema, I extends Item<S>>(
           adaptResponse(
             index.search(adaptRequest(request, index.config().schema)),
             request.params?.query || "",
-            index.config().idKey,
+            index.config().idKey
           )
         ),
       }) as any,
@@ -40,23 +40,20 @@ export function getSearchClient<S extends Schema, I extends Item<S>>(
           exhaustiveFacetsCount: true,
           facetHits: index
             .facet(
-              querie.params.facetName,
-              adaptRequest(
-                { ...(querie.params as any), perPage: -1 },
-                index.config().schema
-              )
+              {
+                field: querie.params.facetName,
+                query: querie.params.facetQuery,
+                perPage:
+                  querie.params.maxFacetHits || querie.params.maxValuesPerFacet,
+              },
+              adaptRequest(querie.params as any, index.config().schema)
             )
-            .items.filter(
-              ([x]) =>
-                x &&
-                (x as string).toLowerCase().startsWith(querie.params.facetQuery)
-            )
-            .map(
+            .items.map(
               ([value, count]) =>
                 ({
                   value,
-                  highlighted: value,
                   count,
+                  highlighted: value,
                 } as FacetHit)
             ),
         }))

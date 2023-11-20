@@ -8,8 +8,6 @@ Data copied from [algolia/datasets](https://github.com/algolia/datasets/tree/mas
 
 ## TODO
 
-- [ ] filter out 0 frequency facets
-- [ ] for prices I only need `min` and `max`, I don't need to intersect all facets
 - [ ] move index to worker?
 
 ### Snippeting doesn't work

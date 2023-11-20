@@ -1,47 +1,5 @@
 # Inverted index experiment
 
-## Idea
-
-- diffrent type of indexes:
-  - Inverted index based on Map
-  - Inverted index based on TrieMap
-  - Full-text index based on different implemntations, like MiniSearch, Fuse, Flexsearch etc.
-    - except ids, it can return order of items (relevance)
-    - except ids, it can return `matches` 
-- ids from index can be returned as BitSet (preferable) or as array
-- indexes can be combined with `union` (`or`), `intersection` (`and`)
-- other features: 
-  - `sort` - simple array sort
-  - `filter` - simple array filter
-  - pagination - simple array slice
-- facets
-  - categorical facets
-    - collect all values, count, sort by frequency
-  - numerical facets
-    - min, max
-- memoize one
-  - should help with pagination and sorting
-- schema to use different types for different indexes: number, string, string[]
-  - id field
-  - date fields
-  - or rather put type in agregation
-- query as object `(and (eq index field) (eq index field) (or ...))`
-
-## TODO
-
-- benchmark performance
-  - https://benchmarkjs.com/
-- benchmark memory
-  - https://www.valentinog.com/blog/node-usage/
-
-## data structure
-
-- set of integers (BitSet, Roaring Bitmaps)
-- sorted set
-- bag of integers
-  - https://sair.synerise.com/efficient-integer-pairs-hashing/ ?
-- sorted bag
-
 ## Intro
 
 Just some experiments with inverted index and related subjects.
@@ -59,7 +17,7 @@ Options which I can think of:
 - Modern JS
   - Dictionary - `Map`
   - Set - `Set`
-    - Relate [missing set operations](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations)
+    - Related [missing set operations](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations)
 - Less naive approach
   - Dictionary - some kind of TrieMap
     - https://lucaong.github.io/minisearch/classes/SearchableMap_SearchableMap.SearchableMap.html
@@ -68,7 +26,7 @@ Options which I can think of:
     - https://github.com/Sec-ant/trie-map
     - https://github.com/mattbierner/hamt
     - https://github.com/scttdavs/radix-trie
-    - Relate https://towardsdatascience.com/the-pruning-radix-trie-a-radix-trie-on-steroids-412807f77abc
+    - Related https://towardsdatascience.com/the-pruning-radix-trie-a-radix-trie-on-steroids-412807f77abc
   - Set
     - https://github.com/lemire/FastBitSet.js/
     - https://github.com/lemire/TypedFastBitSet.js/
