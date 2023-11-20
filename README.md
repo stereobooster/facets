@@ -9,8 +9,8 @@
 
 It is the monorepo repository:
 
-- main package - [facets](/packages/facets/)
-- [InstantSearch adapter for facets](/packages/facets-instantsearch/)
+- main package - [facets](/packages/facets/) ![npm version](https://img.shields.io/npm/v/%40stereobooster/facets)
+- [InstantSearch adapter for facets](/packages/facets-instantsearch/)  ![npm version](https://img.shields.io/npm/v/%40stereobooster/facets-instantsearch)
 - and [demo site](/packages/demo/README.md)
 
 **Facets** is a client-side (though you can run it on the server) faceted search engine.
