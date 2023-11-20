@@ -4,9 +4,8 @@
   - fuzzy search for short texts
   - full-text search for long text
 - facets optimization
-  - single value columns filter
+  - single value columns should be easier to optimize than array fields
   - we can iterate over first page only
-  - we can put selected values on top
   - for numeric facet for slider:
     - sort by value asc
     - don't care about selected values
@@ -19,11 +18,7 @@
 - sort by more than one column
 - Other
   - [BFloat16 wasm](https://github.com/tc39/proposal-float16array/issues/7)
-  - RoaringWasm, TrieMap
   - preindexed data
-- query string parser
-- demo with graph?
-- alternative solutions
   - test CSV instead of JSON (memory footprint)
   - memoize sort order in `TypedArray` (Int16)
 

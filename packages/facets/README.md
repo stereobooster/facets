@@ -29,6 +29,7 @@ The demo works, as you can see, but beyond that, there was no exhaustive testing
     - sort by value asc
     - `showZeroes=false`
 - [initialization](/notes/initialization.md)
+- [memoization](/notes/memoization.md)
 - `​maxValuesPerFacet`
 - `facets: "price"`
 - numeric filter
@@ -39,6 +40,6 @@ The demo works, as you can see, but beyond that, there was no exhaustive testing
   - warn if people try to use text search without providing text index
 - [benchmarks](https://github.com/tinylibs/tinybench)
   - performance seems to be good (except numeric range filter), but in order to be sure we need to do benchmark
-  - I'm curious if using TrieMap would allow to save memory
 - benchmark memory
   - https://www.valentinog.com/blog/node-usage/
+  - I'm curious if using TrieMap would allow to save memory

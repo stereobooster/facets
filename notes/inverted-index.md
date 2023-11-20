@@ -1,8 +1,6 @@
-# Inverted index experiment
+# Inverted index
 
 ## Intro
-
-Just some experiments with inverted index and related subjects.
 
 In order to do inverted index we need two data structures:
 
@@ -106,4 +104,4 @@ Equivalent to retriving item from dictionary `O(1)` and union sets `O(?)`:
 select * from t where country LIKE 'U%'
 ```
 
-Equivalent to retriving item from trie `O(?)` for dictionary it would be `O(n)` operation
+- TrieMap: `index1.find(U).reduce((p, [_, v]) => p.union(v), new SparseTypedFastBitSet())`

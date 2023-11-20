@@ -7,6 +7,9 @@
   </picture>
 </p>
 
+> [!WARNING]  
+> Appearantly pagefind also supports [faceted search](https://pagefind.app/docs/js-api-filtering/) and [loading data from json](https://pagefind.app/docs/node-api/). I found out it only after implemented this library. I want to try it out
+
 It is the monorepo repository:
 
 - main package - [facets](/packages/facets/)

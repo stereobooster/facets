@@ -8,7 +8,7 @@ export const products = hits({
     item: (hit, { html, components }) => html`
       <article class="hit">
         <header class="hit-image-container">
-          <img src="${hit.image}" alt="${hit.name}" class="hit-image" />
+          <img src="${hit.image}" alt="${hit.name}" class="hit-image" loading="lazy" />
         </header>
 
         <div class="hit-info-container">
