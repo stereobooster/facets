@@ -1,5 +1,8 @@
 # Unsorted ideas
 
+- more than one type of search at once
+  - fuzzy search for short texts
+  - full-text search for long text
 - facets optimization
   - single value columns filter
   - we can iterate over first page only

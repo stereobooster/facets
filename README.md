@@ -3,7 +3,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="logo/logo-dark.svg">
-    <img alt="" src="logo/logo.svg" width="200">
+    <img alt="" src="logo/logo.svg" width="200" height="200">
   </picture>
 </p>
 

@@ -103,6 +103,9 @@ const search = instantsearch({
   indexName: "instant_search",
   routing: getRouting({ indexName: "instant_search" }),
   insights: false,
+  future: {
+    preserveSharedStateOnUnmount: true,
+  }
 });
 
 search.addWidgets([

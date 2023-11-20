@@ -5,13 +5,6 @@ export function adaptRequest<S extends Schema>(
   request: MultipleQueriesQuery,
   schema: Schema
 ): SearchOptions<S> {
-  // request.params.attributesToSnippet = ["description:10"]
-
-  // Facet request:
-  // facets: "price"
-  // hitsPerPage: 0
-  // ​maxValuesPerFacet: 10
-
   return {
     query: request.params?.query,
     page: request.params?.page,
@@ -21,6 +14,12 @@ export function adaptRequest<S extends Schema>(
       ...adaptFacetFilters(request.params?.facetFilters as any, schema),
       ...adaptNumericFilters(request.params?.numericFilters as any),
     } as any,
+    highlight: {
+      start: "__ais-highlight__",
+      end: "__/ais-highlight__",
+      key: "_highlightResult",
+      subKey: "value",
+    },
   };
 }
 

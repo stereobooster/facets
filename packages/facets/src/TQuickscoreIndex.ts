@@ -34,19 +34,20 @@ export class TQuickscoreIndex extends TextIndexBase {
     };
   }
 
-  highlight(matches: Map<number, Record<string, RangeTuple[]>>) {
-    return (value: any) => {
-      const id = value[this.#idKey];
+  highlight(
+    matches: Map<number, Record<string, RangeTuple[]>>,
+    srtStart: string,
+    srtEnd: string,
+    subKey?: string
+  ) {
+    return (item: any) => {
+      const id = item[this.#idKey];
       const match = matches.get(id)!;
-      return Object.keys(match).reduce((res, key) => {
-        // TODO: this should be configurable
-        const srtStart = "__ais-highlight__";
-        const srtEnd = "__/ais-highlight__";
-
-        const str = value[key] as string;
+      return Object.keys(match).reduce((res, field) => {
+        const str = item[field] as string;
         const parts: string[] = [];
         let start = 0;
-        match[key].forEach((range) => {
+        match[field].forEach((range) => {
           if (range[0] > start) parts.push(str.slice(start, range[0]));
           parts.push(srtStart);
           parts.push(str.slice(range[0], range[1]));
@@ -56,15 +57,13 @@ export class TQuickscoreIndex extends TextIndexBase {
         if (start < str.length - 1)
           parts.push(str.slice(start, str.length - 1));
 
-        // TODO: for now using InstantSearch/Algolia convention
-        res[key] = {
-          value: parts.join(""),
-          // matchLevel: "full",
-          // fullyHighlighted: false,
-          // matchedWords: [],
-        };
+        res[field] = subKey
+          ? {
+              [subKey]: parts.join(""),
+            }
+          : parts.join("");
         return res;
-      }, Object.create(null));
+      }, Object.create(null) as Record<string, any>);
     };
   }
 }

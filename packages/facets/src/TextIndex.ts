@@ -28,7 +28,12 @@ export class TextIndexBase {
   addOne(_id: number, _value: any): void {
     throw new Error("not impelemted");
   }
-  highlight(_matches: Map<number, any>): (value: any) => Record<string, string> {
+  highlight(
+    _matches: Map<number, any>,
+    _start: string,
+    _end: string,
+    _subKey?: string
+  ): (value: any) => Record<string, string> {
     throw new Error("not impelemted");
   }
 }

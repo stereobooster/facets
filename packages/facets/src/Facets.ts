@@ -141,6 +141,12 @@ export type SearchOptions<S extends Schema> = {
   perPage?: number;
   sort?: [string, SortDirection];
   facetFilter?: FacetFilter<S>;
+  highlight?: {
+    start: string;
+    end: string;
+    key: string;
+    subKey?: string;
+  };
 };
 
 export type SearchResults<S extends Schema, I extends Item<S>> = {
@@ -180,40 +186,50 @@ export class Facets<S extends Schema, I extends Item<S>> {
     const { sortByText, idsByText, facetFilterInternal, idsByFacet, matches } =
       this.#searchAll(options);
 
-    let ids: number[] | undefined;
-    if (idsByFacet && idsByText) {
-      const resultSet = idsByText.new_intersection(idsByFacet) as any;
+    let items: I[] | undefined;
+    if (options?.perPage === 0) {
+      items = [];
+    } else {
+      let ids: number[] | undefined;
+      if (idsByFacet && idsByText) {
+        const resultSet = idsByText.new_intersection(idsByFacet) as any;
+        if (options?.sort) {
+          ids = resultSet?.array();
+        } else {
+          ids = sortByText!.filter((x) => resultSet?.has(x));
+        }
+      } else if (idsByFacet) {
+        ids = idsByFacet.array();
+      } else if (idsByText) {
+        ids = sortByText;
+      }
+      items = ids?.map((id) => this.#items[id]);
+
       if (options?.sort) {
-        ids = resultSet?.array();
-      } else {
-        ids = sortByText!.filter((x) => resultSet?.has(x));
+        if (!items) {
+          // because sort works in place
+          items = [...this.#items];
+        }
+        items = items.sort(this.#sortForResults(options.sort));
       }
-    } else if (idsByFacet) {
-      ids = idsByFacet.array();
-    } else if (idsByText) {
-      ids = sortByText;
-    }
 
-    let items = ids?.map((id) => this.#items[id]);
-
-    if (options?.sort) {
       if (!items) {
-        // because sort works in place
-        items = [...this.#items];
+        items = this.#items;
       }
-      items = items.sort(this.#sortForResults(options.sort));
-    }
-
-    if (!items) {
-      items = this.#items;
     }
 
     const highlighter =
       matches &&
       options?.query &&
       this.#textIndex &&
-      this.#config.textIndex?.canHighlight
-        ? this.#textIndex.highlight(matches)
+      this.#config.textIndex?.canHighlight &&
+      options?.highlight
+        ? this.#textIndex.highlight(
+            matches,
+            options.highlight.start,
+            options.highlight.end,
+            options.highlight.subKey
+          )
         : undefined;
 
     return {
@@ -222,7 +238,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
         options?.page,
         options?.perPage,
         highlighter
-          ? (x) => ({ ...x, _highlightResult: highlighter(x) })
+          ? (x) => ({ ...x, [options?.highlight?.key!]: highlighter(x) })
           : undefined
       ),
       facets: this.#getFacets(facetFilterInternal, idsByText) as any,
