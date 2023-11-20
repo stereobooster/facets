@@ -7,9 +7,6 @@
   </picture>
 </p>
 
-> [!WARNING]  
-> Appearantly pagefind also supports [faceted search](https://pagefind.app/docs/js-api-filtering/) and [loading data from json](https://pagefind.app/docs/node-api/). I found out it only after implemented this library. I want to try it out
-
 It is the monorepo repository:
 
 - main package - [facets](/packages/facets/)
@@ -41,6 +38,9 @@ It is easier to show than explain. [See online demo here](https://facets-demo.st
 The demo works, as you can see, but beyond that, there was no exhaustive testing. There are still rough edges. API can change.
 
 ## Backstory
+
+> [!WARNING]  
+> Appearantly pagefind also supports [faceted search](https://pagefind.app/docs/js-api-filtering/) and [loading data from json](https://pagefind.app/docs/node-api/). I found out it only after implemented this library. I want to try it out
 
 The library inspired by [ItemsJS](https://github.com/itemsapi/itemsjs). There are only three solutions that do faceted searches on the client-side:
 
