@@ -64,7 +64,7 @@ const schema = {
   price: {
     type: "number",
     facet: {
-      showZeroes: true,
+      showZeroes: false,
     },
   },
   image: {
