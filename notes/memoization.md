@@ -33,3 +33,7 @@ function other() {
   m("other", (useMemo) => {});
 }
 ```
+
+## Option 2
+
+Preact [signals](https://preactjs.com/blog/signal-boosting/): `signal` + `computed`.

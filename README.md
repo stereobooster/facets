@@ -10,7 +10,7 @@
 It is the monorepo repository:
 
 - main package - [facets](/packages/facets/) ![npm version](https://img.shields.io/npm/v/%40stereobooster/facets)
-- [InstantSearch adapter for facets](/packages/facets-instantsearch/)  ![npm version](https://img.shields.io/npm/v/%40stereobooster/facets-instantsearch)
+- [InstantSearch adapter for facets](/packages/facets-instantsearch/) ![npm version](https://img.shields.io/npm/v/%40stereobooster/facets-instantsearch)
 - and [demo site](/packages/demo/README.md)
 
 **Facets** is a client-side (though you can run it on the server) faceted search engine.
@@ -39,9 +39,6 @@ The demo works, as you can see, but beyond that, there was no exhaustive testing
 
 ## Backstory
 
-> [!WARNING]  
-> Appearantly pagefind also supports [faceted search](https://pagefind.app/docs/js-api-filtering/) and [loading data from json](https://pagefind.app/docs/node-api/). I found out it only after implemented this library. I want to try it out
-
 The library inspired by [ItemsJS](https://github.com/itemsapi/itemsjs). There are only three solutions that do faceted searches on the client-side:
 
 - [Tanstack table](https://tanstack.com/table/). It is not a primary purpose of the library, though it's possible
@@ -51,6 +48,14 @@ The library inspired by [ItemsJS](https://github.com/itemsapi/itemsjs). There ar
 Read [my article](https://stereobooster.com/posts/faceted-search/) for details.
 
 Initially, I wanted to fork ItemsJS, but I thought - it would be easier to write a library from scratch.
+
+> [!WARNING]  
+> Appearantly pagefind also supports [faceted search](https://pagefind.app/docs/js-api-filtering/) and [loading data from json](https://pagefind.app/docs/node-api/). I found out it only after implemented this library.
+
+See:
+
+- [pagefind-instantsearch](https://github.com/stereobooster/pagefind-instantsearch)
+- https://github.com/CloudCannon/pagefind/discussions/512
 
 ## Development
 
