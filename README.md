@@ -71,4 +71,4 @@ Logo by Pravin Unagar from <a href="https://thenounproject.com/browse/icons/term
 ## TODO
 
 - prettier, eslint
-- add example to [faceted-search demo](https://github.com/stereobooster/faceted-search)
+
