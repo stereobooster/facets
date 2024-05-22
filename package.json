@@ -7,7 +7,7 @@
     "tsc": "turbo run tsc"
   },
   "devDependencies": {
-    "turbo": "^1.10.16",
-    "typescript": "^5.2.2"
+    "turbo": "^1.13.3",
+    "typescript": "^5.4.5"
   }
 }

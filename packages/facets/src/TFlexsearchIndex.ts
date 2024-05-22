@@ -1,6 +1,6 @@
-import flexsearch, { SearchOptions } from "flexsearch";
-// @ts-expect-error type signatures outdated
-const { Document } = flexsearch;
+import { SearchOptions } from "flexsearch";
+// @ts-expect-error
+import Document from "flexsearch/dist/module/document";
 
 import {
   TextIndexBase,

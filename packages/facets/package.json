@@ -2,7 +2,14 @@
   "name": "@stereobooster/facets",
   "version": "0.1.0",
   "description": "Client-side (though you can run it on the server) faceted search engine",
-  "keywords": ["faceted", "search", "search-engine", "fulltext", "browser", "client-side"],
+  "keywords": [
+    "faceted",
+    "search",
+    "search-engine",
+    "fulltext",
+    "browser",
+    "client-side"
+  ],
   "author": "stereobooster",
   "license": "MIT",
   "repository": "git@github.com:stereobooster/facets.git",
@@ -40,13 +47,13 @@
     "quick-score": "^0.2.0"
   },
   "devDependencies": {
-    "mnemonist": "^0.39.5",
-    "flexsearch": "^0.7.31",
+    "flexsearch": "^0.7.43",
     "fuse.js": "^7.0.0",
-    "minisearch": "^6.2.0",
-    "quick-score": "^0.2.0",
     "microbundle": "^0.15.1",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "minisearch": "^6.3.0",
+    "mnemonist": "^0.39.8",
+    "quick-score": "^0.2.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   }
 }
