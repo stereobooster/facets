@@ -428,7 +428,13 @@ export class Facets<S extends Schema, I extends Item<S>> {
     }
 
     if (resultSet && !showZeroes) {
-      newFacet = newFacet.filter(([x, y]) => y !== 0 || selected?.includes(x));
+      if (Array.isArray(selected)) {
+        newFacet = newFacet.filter(
+          ([x, y]) => y !== 0 || selected?.includes(x)
+        );
+      } else {
+        newFacet = newFacet.filter(([_, y]) => y !== 0);
+      }
     }
 
     const sortConfig = this.#sortConfigForFacet(field);

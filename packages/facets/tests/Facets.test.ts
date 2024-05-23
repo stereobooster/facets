@@ -3,7 +3,10 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { Facets } from "../src/Facets";
 // @ts-expect-error need node types
-const items = JSON.parse(readFileSync("./tests/records.json")).slice(0, 40) as any[];
+const items = JSON.parse(readFileSync("./tests/records.json")).slice(
+  0,
+  40
+) as any[];
 const schema = {
   brand: {
     type: "string" as const,
@@ -106,6 +109,16 @@ describe("Facets", () => {
       expect(result.items[0].price).toEqual(14.95);
     });
 
+    it("filters by number and string facet", () => {
+      const result = t.search({
+        facetFilter: {
+          price: { from: 0, to: 14.95 },
+          categories: ["Drone Parts"],
+        },
+      });
+      expect(result.items[0].price).toEqual(14.95);
+    });
+
     it("filters by string facet", () => {
       const categories = [
         "Cameras & Camcorders",
@@ -192,10 +205,7 @@ describe("Facets", () => {
         "Computers & Tablets",
         23,
       ]);
-      expect(result.facets.categories.items[10]).toEqual([
-        "LED Monitors",
-        1,
-      ]);
+      expect(result.facets.categories.items[10]).toEqual(["LED Monitors", 1]);
     });
   });
 });
