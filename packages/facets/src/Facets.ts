@@ -440,7 +440,7 @@ export class Facets<S extends Schema, I extends Item<S>> {
     const sortConfig = this.#sortConfigForFacet(field);
     if (
       (resultSet && sortConfig[0] === "frequency") ||
-      (selectedFirst && selected.length > 0)
+      (selectedFirst && Array.isArray(selected) && selected.length > 0)
     ) {
       newFacet.sort(
         this.#sortForFacet(field, selectedFirst ? selected : undefined)
@@ -461,7 +461,11 @@ export class Facets<S extends Schema, I extends Item<S>> {
     }
 
     return {
-      ...paginate(newFacet, page, perPage, ([x, y]) => [x, y]),
+      // If there are selected values - do not paginate
+      // other way would be - cherry pick selected items in addition to a page
+      ...(Array.isArray(selected) && selected.length > 0
+        ? paginate(newFacet, 0, -1, ([x, y]) => [x, y])
+        : paginate(newFacet, page, perPage, ([x, y]) => [x, y])),
       stats,
     } as FacetResult;
   }
