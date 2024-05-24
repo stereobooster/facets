@@ -14,6 +14,10 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 
+import { adapter } from "./search";
+import Results from "./search-ui/Results";
+import Checkboxes from "./search-ui/Checkboxes";
+
 export default function App() {
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -39,7 +43,9 @@ export default function App() {
               >
                 <AccordionItem value="item-1">
                   <AccordionTrigger>Category</AccordionTrigger>
-                  <AccordionContent>TODO</AccordionContent>
+                  <AccordionContent>
+                    <Checkboxes adapter={adapter} facet="categories"/>
+                  </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
                   <AccordionTrigger>Brands</AccordionTrigger>
@@ -100,10 +106,9 @@ export default function App() {
           <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
           </div>
-          <div
-            className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm"
-            x-chunk="dashboard-02-chunk-1"
-          ></div>
+          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+            <Results adapter={adapter} />
+          </div>
         </main>
       </div>
     </div>

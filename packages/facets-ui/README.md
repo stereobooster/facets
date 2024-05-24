@@ -53,3 +53,20 @@ flowchart LR
 - etc.
 
 In [faceted-search](https://github.com/stereobooster/faceted-search) React hook which wraps `useReactTable` serves as adapter.
+
+### Adapter
+
+For events (and state) I can use:
+
+- [mitt](https://github.com/developit/mitt/)
+- [signals](https://github.com/preactjs/signals)
+- [Zustand, Jotai, Valtio](https://react-community-tools-practices-cheatsheet.netlify.app/state-management/poimandres/)
+
+Let's start with event emitter (`mitt`).
+
+We need to store
+
+- query / UI state
+- response / facets + items
+- multiple searches / debouncing input
+- states: pending / success / error
